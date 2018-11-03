@@ -1,0 +1,8 @@
+body {
+    margin: 24px 48px;
+}
+
+.output-json {
+    display: block;
+    width: 100%;
+}
