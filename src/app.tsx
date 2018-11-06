@@ -4,6 +4,7 @@ import {render} from "react-dom";
 // import {applyMiddleware, createStore} from "redux";
 // import {rootReducer} from "./reducers";
 import {App} from "./components/App";
+import {parseUrlParams} from "./browser";
 // import thunkMiddleware from "redux-thunk";
 // import {createLogger} from "redux-logger";
 
@@ -16,7 +17,9 @@ import {App} from "./components/App";
 //     ));
 
 const mountPoint = document.getElementById("mount-point");
-if (mountPoint) render(<App/>, mountPoint);
+const l = window ? window.location : null;
+const params = parseUrlParams(l ? l.search : null);
+if (mountPoint) render(<App {...params}/>, mountPoint);
 
 // if ('serviceWorker' in navigator) {
 //   navigator.serviceWorker.register('js/service-worker.js', {

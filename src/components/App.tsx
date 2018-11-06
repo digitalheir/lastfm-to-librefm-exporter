@@ -2,8 +2,9 @@ import * as React from "react";
 import {ApiParameter} from "./ApiParameter";
 import {StatusLine} from "./StatusLine";
 import {parseRawScrobble} from "../parse_track";
-import {apiMethodDefault, createUrl} from "../lastfm";
+import {apiMethodDefault, connectApplicationLastFm, createSessionUrlLastFm, createUrl} from "../lastfm";
 import {createRequest} from "../fetch-url";
+// import {md5hash} from "../md5";
 
 // import {SearchContainer} from "./Search";
 // import {SearchResults} from "./SearchResults";
@@ -23,10 +24,22 @@ interface State {
     xhr: XMLHttpRequest | null;
     libreUsername: string;
     librePassword: string;
+    libreToken: string;
 }
 
 interface Props {
+    api_key?: string;
+    token?: string;
 }
+
+
+// function md5_vm_test() {
+//     return md5hash("abc").toLowerCase() === "900150983cd24fb0d6963f7d28e17f72";
+// }
+// if (!md5_vm_test()) throw Error(":(");
+
+// token
+// 1BtV49ytXB7KFSs1ZddWyJCFgfqjuBkg
 
 // const settings = (username: string,
 //                   startpage: number,
@@ -63,7 +76,8 @@ export class App extends React.PureComponent<Props, State> {
     state = {
         libreUsername: "",
         librePassword: "",
-        api_key: "e38cc7822bd7476fe4083e36ee69748e",
+        libreToken: this.props.token,
+        api_key: this.props.api_key || "e38cc7822bd7476fe4083e36ee69748e",
         api_method: apiMethodDefault,
         userLastFm: "",
         scrobbles: [],
@@ -188,12 +202,15 @@ export class App extends React.PureComponent<Props, State> {
                         }}/>
                     <ApiParameter
                         currentValue={this.state.api_key}
-                        defaultValue=""
+                        defaultValue={this.props.api_key || ""}
                         title="API key"
                         htmlFor="api-key-lastfm"
                         onChange={e => {
                             this.setState({api_key: e.target.value});
-                        }}/>
+                        }}>
+                        <a className="api-parameter-cell request-api-key" href="https://www.last.fm/api/account/create">Request
+                            API key</a>
+                    </ApiParameter>
                     <ApiParameter
                         currentValue={this.state.api_method}
                         defaultValue={apiMethodDefault}
@@ -248,15 +265,27 @@ export class App extends React.PureComponent<Props, State> {
                             const librePassword = e.target.value;
                             this.setState({librePassword});
                         })}/>
+                    <ApiParameter
+                        htmlFor="api-token-libre"
+                        title="Token"
+                        defaultValue={this.props.token}
+                        currentValue={this.state.librePassword}
+                        onChange={(e => {
+                            // apikey
+                            // 03c4ce0af2ca44358fe605cffe769f29
+                            // token
+                            // 1BtV49ytXB7KFSs1ZddWyJCFgfqjuBkg
+                            this.setState({libreToken: e.target.value});
+                        })}/>
                 </div>
             </section>
-
             <StatusLine {...this.state} scrobbleNum={this.state.scrobbles.length}/>
-
             <section>
                 <h2>Synchronize Last.fm scrobbles to Libre.fm</h2>
                 <button onClick={() => {
-                    alert("TODO: iomplement");
+                    const session = createSessionUrlLastFm(this.state.api_key, this.state.libreToken);
+
+                    alert(connectApplicationLastFm(this.state.api_key) + "\n\n" + session);
                 }}>Synchronize Last.fm scrobbles to Libre.fm
                 </button>
             </section>

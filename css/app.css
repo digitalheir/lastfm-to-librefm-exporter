@@ -11,8 +11,12 @@ body {
     margin: 0 0 12px 0;
 }
 
+.request-api-key {
+    font-size: x-small;
+}
+
 .status {
-    margin: 0 0 12px 0;
+    margin: 24px 0 12px 0;
 }
 
 .status-line-url {
@@ -33,11 +37,10 @@ body {
     display: table-row;
 }
 
-.api-parameter-label {
+.api-parameter-cell {
     display: table-cell;
 }
 
 .api-parameter-input {
     margin: 0 24px;
-    display: table-cell;
 }

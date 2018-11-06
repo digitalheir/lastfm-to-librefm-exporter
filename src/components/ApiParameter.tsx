@@ -15,6 +15,7 @@ interface ApiParameterProps {
 }
 
 export const ApiParameter: StatelessComponent<ApiParameterProps> = ({
+                                                                        children,
                                                                         defaultValue,
                                                                         currentValue,
                                                                         type,
@@ -23,11 +24,12 @@ export const ApiParameter: StatelessComponent<ApiParameterProps> = ({
                                                                         onChange,
                                                                     }) =>
     <div className="api-parameter">
-        <label className={"api-parameter-label " + classNameInput(currentValue)}
+        <label className={"api-parameter-cell api-parameter-label " + classNameInput(currentValue)}
                htmlFor={htmlFor}>{title}</label>
-        <input className="api-parameter-input"
+        <input className="api-parameter-cell api-parameter-input"
                defaultValue={defaultValue}
                type={type || "text"}
                name={htmlFor}
                onChange={onChange}/>
+        {children}
     </div>;
