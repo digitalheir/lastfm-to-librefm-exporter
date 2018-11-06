@@ -6,3 +6,38 @@ body {
     display: block;
     width: 100%;
 }
+
+.btn-export {
+    margin: 0 0 12px 0;
+}
+
+.status {
+    margin: 0 0 12px 0;
+}
+
+.status-line-url {
+    color: grey;
+    text-decoration: none;
+    font-size: small;
+}
+
+.label-input-empty {
+    font-weight: bold;
+}
+
+.api-parameters {
+    display: table;
+}
+
+.api-parameter {
+    display: table-row;
+}
+
+.api-parameter-label {
+    display: table-cell;
+}
+
+.api-parameter-input {
+    margin: 0 24px;
+    display: table-cell;
+}
