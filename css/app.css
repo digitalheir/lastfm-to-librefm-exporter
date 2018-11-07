@@ -105,6 +105,7 @@ textarea {
 
 input[type=submit] {
     background-color: #eee;
+    border-radius: 0.5em;
 }
 
 input[type=checkbox] {
@@ -112,8 +113,13 @@ input[type=checkbox] {
     color: #333;
 }
 
-button {
+button:hover {
     background-color: #eee;
+}
+
+button {
+    background-color: #fdfdfd;
+    border-radius: 0.5em;
 }
 
 input[type=text] {
