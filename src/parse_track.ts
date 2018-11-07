@@ -20,12 +20,16 @@ export interface Scrobble {
     mbid?: string;
     album?: Album;
     uts?: number;
+    duration?: string;
+    trackNumber?: string;
 }
 
 export const parseRawScrobble = (track: any): Scrobble => ({
     artist: parseArtist(track.artist),
     name: sanitizeString(track.name || undefined),
     mbid: sanitizeString(track.mbid || undefined),
+    duration: sanitizeString(track.duration || undefined),
+    trackNumber: sanitizeString(track.trackNumber || undefined),
     album: parseAlbum(track.album),
     uts: (track.date && track.date.uts) || undefined,
 });

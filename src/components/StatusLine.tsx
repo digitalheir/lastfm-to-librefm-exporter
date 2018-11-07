@@ -16,15 +16,15 @@ export const StatusLine: React.StatelessComponent<{
     const children = [];
     const showUrl = (!errorMessage || retrying >= 0);
     if (retrying === -200)
-        children.push(<div className="status-line-page">Done! Received {scrobbleNum} tracks.</div>);
+        children.push(<div key="done" className="status-line-page">Done! Received {scrobbleNum} tracks.</div>);
     else if (showUrl && (startpage > 1 || totalPages > 0))
-        children.push(<div className="status-line-page">{startpage} / {totalPages} ({scrobbleNum} scrobbles so
+        children.push(<div key="progress" className="status-line-page">{startpage} / {totalPages} ({scrobbleNum} scrobbles so
             far)</div>);
     if (showUrl && url)
-        children.push(<div className="status-line-url"><a href={url}>{url}</a></div>);
-    children.push(retrying > 0 ? <ErrorMessage errorMessage={errorMessage} retrying={retrying}/>
-        : errorMessage ? <ErrorMessage errorMessage={errorMessage}/>
-            : url ? <div className="status-line">Fetching</div>
-                : <div className="status-line"/>);
+        children.push(<div key="url" className="status-line-url"><a href={url}>{url}</a></div>);
+    children.push(retrying > 0 ? <ErrorMessage key="retrying" errorMessage={errorMessage} retrying={retrying}/>
+        : errorMessage ? <ErrorMessage key="retrying" errorMessage={errorMessage}/>
+            : url ? <div key="retrying" className="status-line">Fetching ...</div>
+                : <div key="retrying" className="status-line"/>);
     return <div className="status">{children}</div>;
 };

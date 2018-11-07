@@ -11,8 +11,20 @@ body {
     margin: 0 0 12px 0;
 }
 
-.request-api-key {
+.xsmall {
     font-size: x-small;
+}
+
+.subtitled h2 {
+    margin: 1.5em 0 0 0;
+}
+
+.subtitle p {
+    margin: 0;
+}
+
+.subtitle {
+    margin: 0 0 1.5em 0 ;
 }
 
 .status {
@@ -30,17 +42,51 @@ body {
 }
 
 .api-parameters {
-    display: table;
+    display: block;
 }
 
 .api-parameter {
-    display: table-row;
+    display: block;
 }
 
 .api-parameter-cell {
-    display: table-cell;
+    min-width: 7em;
+    display: inline-block;
 }
+
+.api-parameter-label {
+    width: 15em;
+}
+
 
 .api-parameter-input {
     margin: 0 24px;
+}
+
+.frame-output {
+    height: 48px;
+    width: 100%;
+}
+
+.btn-authorize-token {
+    margin: 0 0 024px;
+}
+
+.btn-big {
+    width: 100%;
+    min-height: 48px;
+}
+
+.btn-create-session {
+    /*margin: 24px 0;*/
+}
+
+.instruction {
+    font-size: small;
+}
+
+.all-set {
+    margin: 12px 0 0 0;
+    font-weight: bold;
+    text-align: center;
 }

@@ -27,6 +27,7 @@ const plugins = [
 const config = {
     entry: {
         app: __dirname + "/src/app.tsx",
+        synchronize: __dirname + "/src/app_synchronize.tsx",
         // renderStatic: __dirname + "/src/render.tsx"
     },
     devtool: "source-map",

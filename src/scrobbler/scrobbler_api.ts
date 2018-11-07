@@ -1,17 +1,34 @@
-import {md5hash} from "./md5";
-import {LibreScrobbleTrack} from "./librefm";
+import {md5hash} from "../md5";
+import {LibreScrobbleTrack} from "../librefm";
+import {makePostRequest} from "../fetch-url";
+
+export const urlGetToken = (base_url: string, api_key: string, secret: string) => {
+    const params = [
+        ["method", "auth.getToken"],
+        ["api_key", api_key],
+        // ["format", "json"],
+    ];
+    return `${base_url}?${urlEncodeParams(params)}&api_sig=${constructSignatureForParams(params, secret)}&format=json`;
+};
 
 export const connectApplication = (baseUrl: string,
                                    apiKey: string,
-                                   cb?: string) => `${baseUrl}auth/?api_key=${cb ? apiKey + "&cb=" + cb : apiKey}`;
+                                   cb?: string) => `${baseUrl}auth/?api_key=${cb ? apiKey + "&cb=" + encodeURIComponent(cb) : apiKey}`;
+
+// export const authorizeToken = (baseUrl: string,
+//                                apiKey: string,
+//                                token: string) => `${baseUrl}auth/?api_key=${apiKey}&token=${token}`;
 
 const urlEncodeParams = (params: string[][]) => params.map(p => `${p[0]}=${p[1]}`).join("&");
 
 export const createSessionUrl = (baseUrl: string,
                                  apiKey: string,
-                                 token: string) => {
-    const params = [["api_key", apiKey], ["method", "auth.getSession"], ["token", token]];
-    return `${baseUrl}?${urlEncodeParams(params)}&api_sig=${constructSignatureForParams(params, secret)}`;
+                                 token: string,
+                                 secret: string) => {
+    const params = [["api_key", apiKey], ["method", "auth.getSession"], ["token", token],
+        // ["format", "json"]
+    ];
+    return `${baseUrl}?${urlEncodeParams(params)}&api_sig=${constructSignatureForParams(params, secret)}&format=json`;
 };
 
 const append = function (data: string[][], key: string, value?: string) {
@@ -34,10 +51,7 @@ const appendTrack = (data: string[][],
     append(data, `duration[${i}]`, track.duration); //  (Optional) : The length of the track in seconds.
 };
 
-export const scrobbleTracks = (baseUrl: string,
-                               apiKey: string,
-                               sk: string,
-                               tracks: LibreScrobbleTrack[]) => {
+export function createScrobbleFormData(tracks: LibreScrobbleTrack[], apiKey: string, sk: string, secret: string) {
     const data: string[][] = [];
     tracks.forEach((track, i) => appendTrack(data, track, i));
     const method = "track.scrobble";
@@ -47,6 +61,23 @@ export const scrobbleTracks = (baseUrl: string,
     const formData = new FormData();
     data.forEach((pair) => formData.append(pair[0], pair[1]));
     formData.append("api_sig", constructSignatureForParams(data, secret));
+    return formData;
+}
+
+export const scrobbleTracks = (baseUrl: string,
+                               apiKey: string,
+                               sk: string,
+                               secret: string,
+                               tracks: LibreScrobbleTrack[]) => {
+    const formData = createScrobbleFormData(tracks, apiKey, sk, secret);
+
+    const req = makePostRequest(baseUrl, formData, () => {
+        // const res = JSON.parse(req.responseText);
+        alert(req.responseText);
+    }, () => {
+        // const res = JSON.parse(req.responseText);
+        alert(req.responseText);
+    });
 };
 
 
@@ -70,5 +101,5 @@ const constructSignature = (apiKey: string, method: string, token: string, secre
 
 const sortByKey = (data: string[][]) => data.sort((a, b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0);
 
-const constructSignatureForParams = (data: string[][], secret: string): string => md5hash(
+export const constructSignatureForParams = (data: string[][], secret: string): string => md5hash(
     `${sortByKey(data).map(pair => pair[0] + pair[1])}${secret}`);
