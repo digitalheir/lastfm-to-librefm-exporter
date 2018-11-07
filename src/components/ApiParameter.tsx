@@ -1,8 +1,8 @@
 import * as React from "react";
 import {PureComponent, createRef} from "react";
 
-function classNameInput(value: any) {
-    return value ? "label-input-set" : "label-input-empty";
+function classNameInput(value: any, preferred?: string) {
+    return value ? preferred ? preferred : "label-input-set" : "label-input-empty";
 }
 
 interface ApiParameterProps {
@@ -11,6 +11,7 @@ interface ApiParameterProps {
     currentValue: any;
     title: string;
     htmlFor: string;
+    classNameWhenSet?: string;
     onChange: (e: any) => any;
 }
 
@@ -38,11 +39,12 @@ export class ApiParameter extends PureComponent<ApiParameterProps, ApiParameterS
             type,
             title,
             htmlFor,
-            onChange,
+            classNameWhenSet
         } = this.props;
         return <div className="api-parameter">
-            <label className={"api-parameter-cell api-parameter-label " + classNameInput(currentValue)}
-                   htmlFor={htmlFor}>{title}</label>
+            <label
+                className={"api-parameter-cell api-parameter-label " + classNameInput(currentValue, classNameWhenSet)}
+                htmlFor={htmlFor}>{title}</label>
             <input className="api-parameter-cell api-parameter-input"
                    defaultValue={defaultValue}
                    type={type || "text"}

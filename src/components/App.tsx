@@ -4,18 +4,12 @@ import {StatusLine} from "./StatusLine";
 import {parseRawScrobble, Scrobble} from "../parse_track";
 import {apiMethodDefault, createUrl} from "../lastfm";
 import {makeGetRequest} from "../fetch-url";
-import {convertToLibreScrobbles, libre2_0, libreApi} from "../librefm";
-import {
-    constructSignatureForParams,
-    createScrobbleFormData
-} from "../scrobbler/scrobbler_api";
+import {createScrobbleForm, libre2_0, libreApi} from "../librefm";
+import {constructSignatureForParams} from "../scrobbler/scrobbler_api";
 import {splitArray} from "../util/collections";
 import {StateUrl} from "./StateUrl";
 import {parseFiniteInt} from "../util/number";
-// import {md5hash} from "../md5";
-
-// import {SearchContainer} from "./Search";
-// import {SearchResults} from "./SearchResults";
+import {div} from "../util/dom";
 
 interface State {
     retrying: number;
@@ -145,62 +139,36 @@ export class App extends React.PureComponent<Props, State> {
         this.startExportJsonPage(this.state.startpage, pushToLibre);
     }
 
-    createScrobbleForm(frameName: string, tracks: Scrobble[]) {
-        const form = document.createElement("form");
-        //form.appendChild(input("",true));
-        form.target = frameName;
-        form.method = "post";
-        form.action = libre2_0;
-
-        const submit = document.createElement("input");
-        submit.type = "submit";
-        submit.value = `Retry scrobbling ${tracks.length} tracks to Libre.fm`;
-        form.appendChild(submit);
-
-        const formData = createScrobbleFormData(convertToLibreScrobbles(tracks), this.state.libreApiKey, this.state.libreSessionKey, this.state.libreSecret);
-        formData.forEach((v, k) => {
-            const inp = document.createElement("input");
-            inp.type = "hidden";
-            // inp.type = "text";
-            inp.value = v.toString();
-            inp.name = k;
-            form.appendChild(inp);
-        });
-        const inp = document.createElement("input");
-        inp.type = "hidden";
-        inp.value = "json";
-        inp.name = "format";
-        form.appendChild(inp);
-        return {form, submit};
-    }
 
     pushToLibreFm(page: number, res: Scrobble[], cb: () => any) {
         const syncScrobs = document.getElementById("synchronize-scrobbles-output");
         if (syncScrobs) {
             const buckets = splitArray(res, 50);
-            const container = document.createElement("div");
+            const container = div("scrobble-page-holder");
             const containerContainer = document.createElement("div");
-            container.className = "scrobble-page-holder";
             const title = document.createElement("h3");
             title.innerHTML = `Page ${page}`;
             containerContainer.appendChild(title);
             containerContainer.appendChild(container);
             syncScrobs.appendChild(containerContainer);
             buckets.forEach((bucket, i) => {
-                const div = document.createElement("div");
-                div.style.width = `${90 / buckets.length}%`;
-                div.className = "scrobble-output-holder";
+                const holder = div("scrobble-output-holder");
+                holder.style.width = `${90 / buckets.length}%`;
                 const ifr = document.createElement("iframe");
                 ifr.className = "output-librefm-scrobble";
                 const frameName = `${page}-${i + 1}`;
                 ifr.name = frameName;
-                const {form, submit} = this.createScrobbleForm(frameName, bucket);
+                const {form, submit} = createScrobbleForm(frameName,
+                    this.state.libreApiKey,
+                    this.state.libreSessionKey,
+                    this.state.libreSecret,
+                    bucket);
                 form.style.width = `100%`;
                 submit.className = "btn-scrobble-libre";
-                div.appendChild(ifr);
-                div.appendChild(form);
+                holder.appendChild(ifr);
+                holder.appendChild(form);
 
-                container.appendChild(div);
+                container.appendChild(holder);
                 submit.click();
             });
             const close = document.createElement("div");
@@ -397,6 +365,7 @@ export class App extends React.PureComponent<Props, State> {
                                    type="submit"/>
                         </form>
                     </div>
+                    <h3>Session</h3>
                     <ApiParameter
                         htmlFor="api-username-libre"
                         title="Username"
@@ -440,7 +409,7 @@ export class App extends React.PureComponent<Props, State> {
                                    }}/>
                         </form>
                         <div className="api-parameter">
-                            <span className={`instruction ${this.state.showSessionInstruction ? "visible" : "hidden"}`}>Copy the username and session key into the above field. So if the response is {"{"}"key": "xyz"}, copy <em>xyz</em> without the quotes.</span>
+                            <span className={`instruction ${this.state.showSessionInstruction ? "visible" : "hidden"}`}>Copy the username and session key into the above fields. So if the response is {"{"}"key": "xyz"}, copy <em>xyz</em> without the quotes.</span>
                         </div>
                         <iframe name="get-session-output"
                                 className={`frame-output ${this.state.showSessionInstruction ? "visible" : "hidden"}`}/>
@@ -469,6 +438,7 @@ export class App extends React.PureComponent<Props, State> {
                         automatically.</p></div>
                 <div className="api-parameters">
                     <ApiParameter
+                        classNameWhenSet=""
                         currentValue={this.state.startpage}
                         defaultValue={this.startpageDefault.toString()}
                         title="Start on Last.fm 'Recently Listened' page"
@@ -481,6 +451,7 @@ export class App extends React.PureComponent<Props, State> {
                     />
                     <ApiParameter
                         htmlFor="api-lastpage-lastfm"
+                        classNameWhenSet=""
                         title="End on page (optional)"
                         defaultValue={this.totalPagesDefault > 0 ? this.totalPagesDefault.toString() : ""}
                         currentValue={this.state.totalPages}

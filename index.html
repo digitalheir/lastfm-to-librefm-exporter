@@ -11,11 +11,12 @@
 
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/mdc.radio.min.css">
-    <link rel="stylesheet" href="css/mdc.textfield.min.css">
-    <link rel="stylesheet" href="css/mdc.checkbox.min.css">
-    <link rel="stylesheet" href="css/mdc.form-field.min.css">
-    <link rel="stylesheet" href="css/app.css">
+    <!--<link rel="stylesheet" href="css/mdc.radio.min.css">-->
+    <!--<link rel="stylesheet" href="css/mdc.textfield.min.css">-->
+    <!--<link rel="stylesheet" href="css/mdc.checkbox.min.css">-->
+    <!--<link rel="stylesheet" href="css/mdc.form-field.min.css">-->
+    <!--<link rel="stylesheet" href="css/app.css">-->
+    <!--suppress CssUnusedSymbol -->
     <style>.github-corner:hover .octo-arm {
         animation: octocat-wave 560ms ease-in-out
     }
@@ -40,15 +41,253 @@
         .github-corner .octo-arm {
             animation: octocat-wave 560ms ease-in-out
         }
-    }</style>
+    }
+    body {
+        /*margin: 24px 0px;*/
+    }
+
+    #app-root {
+        margin: 0 48px;
+    }
+
+    #introduction {
+        margin: 0 48px;
+    }
+
+    .output-json {
+        display: block;
+        width: 100%;
+    }
+
+    .btn-export {
+        margin: 0 0 12px 0;
+    }
+
+    .xsmall {
+        font-size: x-small;
+    }
+
+    .subtitled h2 {
+        margin: 1.5em 0 0 0;
+    }
+
+    .subtitle p {
+        margin: 0;
+    }
+
+    .subtitle {
+        margin: 0 0 1.5em 0;
+    }
+
+    .status {
+        margin: 24px 0 12px 0;
+    }
+
+    .status-line-url {
+        color: grey;
+        text-decoration: none;
+        font-size: small;
+    }
+
+    .label-input-empty {
+        font-weight: bold;
+    }
+
+    .api-parameters {
+        display: block;
+        /*display: table;*/
+    }
+
+    .api-parameter {
+        /*display: table-row;*/
+        display: block;
+        /*min-height: 1.4em;*/
+        margin-bottom: 12px;
+    }
+
+    .api-parameter-cell {
+        min-width: 7em;
+        min-height: 1.8em;
+        /*display: table-cell;*/
+        display: inline-block;
+    }
+
+    .api-parameter-label {
+        width: 15em;
+    }
+
+    .api-parameter-input {
+    }
+
+    .frame-output {
+        height: 48px;
+        width: 100%;
+    }
+
+    .btn-authorize-token {
+        margin: 0 0 024px;
+    }
+
+    .btn-big {
+        width: 100%;
+        min-height: 48px;
+    }
+
+    .btn-create-session {
+        /*margin: 24px 0;*/
+    }
+
+    .instruction {
+        font-size: small;
+    }
+
+    .all-set {
+        margin: 24px 0 0 0;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    input {
+        background-color: white;
+    }
+
+    textarea {
+        background-color: white;
+    }
+
+    input[type=submit] {
+        background-color: #eee;
+        border-radius: 0.5em;
+    }
+
+    input[type=checkbox] {
+        background-color: #eee;
+        color: #333;
+    }
+
+    button:hover {
+        background-color: #eee;
+    }
+
+    button {
+        background-color: #fdfdfd;
+        border-radius: 0.5em;
+    }
+
+    input[type=text] {
+        border-top: none;
+        border-left: none;
+        border-right: none;
+        border-bottom: #eee 2px solid;
+        background: #f8f8f8;
+        border-radius: 0.5em 0.5em 0.5em 0.5em;
+        padding: 0.4em 0.8em 0.2em 0.8em;
+    }
+
+    input[type=text][disabled] {
+        background: #7e7e7e;
+        border-bottom: #717171 2px solid;
+    }
+
+    input[type=text]:focus {
+        border-bottom: #b9b9b9 2px solid;
+    }
+
+    .btn-side {
+        margin-left: 1em;
+    }
+
+    .output-tall {
+        min-height: 144px;
+    }
+
+    .output-librefm-scrobble {
+        border: 0;
+        height: 96px;
+        display: block;
+        width: 100%;
+        border: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .scrobble-output-holder {
+        display: inline-block;
+        border: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .btn-scrobble-libre {
+        width: 100%;
+        border: none;
+        margin: 0;
+        padding: 12px 0;
+    }
+
+    .btn-close {
+        width: 10%;
+        display: inline-block;
+        /* height: 100%; */
+        top: 0;
+        right: 0;
+        bottom: 0;
+        position: absolute;
+        border: 0;
+        background: #FFF url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48IURPQ1RZUEUgc3ZnIFBVQkxJQyAiLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4iICJodHRwOi8vd3d3LnczLm9yZy9HcmFwaGljcy9TVkcvMS4xL0RURC9zdmcxMS5kdGQiPjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZD0iTTE5LDYuNDFMMTcuNTksNUwxMiwxMC41OUw2LjQxLDVMNSw2LjQxTDEwLjU5LDEyTDUsMTcuNTlMNi40MSwxOUwxMiwxMy40MUwxNy41OSwxOUwxOSwxNy41OUwxMy40MSwxMkwxOSw2LjQxWiIgLz48L3N2Zz4=) no-repeat center;
+    }
+
+    .btn-close:hover {
+        width: 10%;
+        display: inline-block;
+        /* height: 100%; */
+        top: 0;
+        right: 0;
+        bottom: 0;
+        position: absolute;
+        border: 0;
+        background-color: #eee;
+    }
+
+    .scrobble-page-holder {
+        position: relative;
+    }
+
+    .label-input-empty::before, .label-input-set::before {
+        padding-right: 12px;
+        font-family: monospace;
+        font-size: 1.5em;
+        line-height: 48px;
+    }
+
+    .label-input-empty::before {
+        content: '∗';
+    }
+
+    .label-input-set::before {
+        color: #388e3c;
+        content: '✓';
+    }
+
+    footer {
+        width: 100%;
+        background-color: #eee;
+        font-size: small;
+        text-align: center;
+        margin-top: 24px;
+        padding-top: 24px;
+        padding-bottom: 24px;
+    }
+    </style>
 </head>
 <body>
 <!--[if lt IE 8]>
 <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade
     your browser</a> to improve your experience.</p>
 <![endif]-->
-<section id="dummy-introduction"><h1>Last.fm exporter / Libre.fm importer</h1>
-    <p>Export tracks from Last.fm and import them to Libre.fm. If you encounter any problems, <a
+<section id="introduction"><h1>Last.fm exporter / Libre.fm importer</h1>
+    <p>Export tracks from <a href="https://www.last.fm">Last.fm</a> and import them to <a
+            href="https://libre.fm">Libre.fm</a>. If you encounter any problems, <a
             href="https://github.com/digitalheir/lastfm-to-librefm-exporter/issues/new">leave a note</a>.</p></section>
 <a href="https://github.com/digitalheir/lastfm-to-librefm-exporter" class="github-corner">
     <svg width="80" height="80" viewBox="0 0 250 250"
@@ -187,7 +426,12 @@
             output</label></div>
     </section>
 </div>
-<script src="js/app.js"></script>
+<footer>
+    This web app was made by <a href="https://github.com/digitalheir">Maarten Trompper</a><br/>
+    Source code licensed under <a
+        href="https://github.com/digitalheir/lastfm-to-librefm-exporter/blob/gh-pages/LICENSE">GPLv3</a>
+</footer>
+<script async src="js/app.js"></script>
 <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
 <!--<script>-->
 <!--(function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=-->
