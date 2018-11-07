@@ -24,7 +24,7 @@ body {
 }
 
 .subtitle {
-    margin: 0 0 1.5em 0 ;
+    margin: 0 0 1.5em 0;
 }
 
 .status {
@@ -43,14 +43,20 @@ body {
 
 .api-parameters {
     display: block;
+    /*display: table;*/
 }
 
 .api-parameter {
+    /*display: table-row;*/
     display: block;
+    /*min-height: 1.4em;*/
+    margin-bottom: 12px;
 }
 
 .api-parameter-cell {
     min-width: 7em;
+    min-height: 1.8em;
+    /*display: table-cell;*/
     display: inline-block;
 }
 
@@ -58,9 +64,7 @@ body {
     width: 15em;
 }
 
-
 .api-parameter-input {
-    margin: 0 24px;
 }
 
 .frame-output {
@@ -89,4 +93,35 @@ body {
     margin: 12px 0 0 0;
     font-weight: bold;
     text-align: center;
+}
+
+input {
+    background-color: white;
+}
+
+button {
+    background-color: #eee;
+}
+
+input[type=text] {
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: #eee 2px solid;
+    background: #f8f8f8;
+    border-radius: 0.5em 0.5em 0.5em 0.5em;
+    padding: 0.4em 0.8em 0.2em 0.8em;
+}
+
+input[type=text][disabled] {
+    background: #7e7e7e;
+    border-bottom: #717171 2px solid;
+}
+
+input[type=text]:focus {
+    border-bottom: #b9b9b9 2px solid;
+}
+
+.btn-side {
+    margin-left: 1em;
 }

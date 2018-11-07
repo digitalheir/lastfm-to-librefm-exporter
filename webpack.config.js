@@ -71,8 +71,8 @@ const config = {
     },
     resolve: {
         alias: {
-            "react": "preact-compat",
-            "react-dom": "preact-compat",
+            // "react": "preact-compat",
+            // "react-dom": "preact-compat",
         },
         extensions: [".js", ".ts", ".jsx", ".tsx"]
     },

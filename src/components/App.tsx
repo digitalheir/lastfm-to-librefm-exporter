@@ -256,7 +256,7 @@ export class App extends React.PureComponent<Props, State> {
                         onChange={e => {
                             this.setState({userLastFm: e.target.value});
                         }}>
-                        <a className={`${this.state.userLastFm ? "visible" : "hidden"} api-parameter-cell xsmall`}
+                        <a className={`${this.state.userLastFm ? "visible" : "hidden"} btn-side api-parameter-cell xsmall`}
                            href={`https://www.last.fm/user/${this.state.userLastFm}`}>Profile</a></ApiParameter>
                     <ApiParameter
                         currentValue={this.state.api_key}
@@ -266,8 +266,7 @@ export class App extends React.PureComponent<Props, State> {
                         onChange={e => {
                             this.setState({api_key: e.target.value});
                         }}>
-                        <a className="api-parameter-cell xsmall" href="https://www.last.fm/api/account/create">Request
-                            API key</a>
+                        <a className="btn-side api-parameter-cell xsmall" href="https://www.last.fm/api/account/create">Request API key</a>
                     </ApiParameter>
                     <ApiParameter
                         currentValue={this.state.api_method}
@@ -353,7 +352,9 @@ export class App extends React.PureComponent<Props, State> {
                                 ["api_key", this.state.libreApiKey],
                                 ["method", "auth.getToken"]
                             ], this.state.libreSecret)}/>
-                            <input value="Create token" type="submit"
+                            <input value="Create token"
+                                   className="btn-side btn-create-token"
+                                   type="submit"
                                    onClick={() => {
                                        this.setState({
                                            showTokenInstruction: true
@@ -391,7 +392,7 @@ export class App extends React.PureComponent<Props, State> {
                             const libreUsername = e.target.value;
                             this.setState({libreUsername});
                         })}>
-                        <a className={`${this.state.libreUsername ? "visible" : "hidden"} api-parameter-cell xsmall`}
+                        <a className={`${this.state.libreUsername ? "visible" : "hidden"} api-parameter-cell xsmall btn-side`}
                            href={`https://libre.fm/user/${this.state.libreUsername}`}>Profile</a>
                     </ApiParameter>
                     <ApiParameter
