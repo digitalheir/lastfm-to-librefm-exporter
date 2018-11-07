@@ -5,6 +5,7 @@
   "private": false,
   "scripts": {
     "start": "npm run dev",
+    "p": "npm run build",
     "build": "webpack -p",
     "dev": "webpack-dev-server --mode development --open 'Chrome'"
   },
