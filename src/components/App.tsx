@@ -10,6 +10,8 @@ import {
     createScrobbleFormData
 } from "../scrobbler/scrobbler_api";
 import {splitArray} from "../util/collections";
+import {StateUrl} from "./StateUrl";
+import {parseFiniteInt} from "../util/number";
 // import {md5hash} from "../md5";
 
 // import {SearchContainer} from "./Search";
@@ -44,6 +46,10 @@ interface Props {
     token?: string;
     secret?: string;
     sk?: string;
+    user_libre?: string;
+    user_last?: string;
+    startpage?: string;
+    totalPages?: string;
 }
 
 const default_key = "r9i1y91hz71tcx7vyrp9hk1alhqp1888";
@@ -52,21 +58,24 @@ const default_secret = "21dsgf56dfg13df5g46sd85769gt45fd";
 const resultsPerPageLastFmDefault = 200;
 
 export class App extends React.PureComponent<Props, State> {
+    private readonly apiKeyDefault = this.props.api_key || "e38cc7822bd7476fe4083e36ee69748e";
+    private readonly startpageDefault = parseFiniteInt(this.props.startpage, 1);
+    private readonly totalPagesDefault = parseFiniteInt(this.props.totalPages, -1);
     state = {
         showTokenInstruction: false,
         showSessionInstruction: false,
-        libreUsername: "",
+        libreUsername: this.props.user_libre || "",
         librePassword: "",
         libreApiKey: this.props.api_key_libre || default_key,
         libreToken: this.props.token || "",
         libreSecret: this.props.secret || default_secret,
         libreSessionKey: this.props.sk || "",
-        api_key: this.props.api_key || "e38cc7822bd7476fe4083e36ee69748e",
+        api_key: this.apiKeyDefault,
         api_method: apiMethodDefault,
-        userLastFm: "",
+        userLastFm: this.props.user_last || "",
         scrobbles: [],
-        startpage: 1,
-        totalPages: -1,
+        startpage: this.startpageDefault,
+        totalPages: this.totalPagesDefault,
         resultsPerPageLastFm: resultsPerPageLastFmDefault,
         retrying: -1,
         url: null,
@@ -132,12 +141,7 @@ export class App extends React.PureComponent<Props, State> {
     startExportJson(pushToLibre: boolean) {
         const currentRequest = this.state.xhr;
         if (currentRequest) currentRequest.abort();
-        this.setState({
-            errorMessage: null,
-            url: null,
-            xhr: null,
-            scrobbles: []
-        });
+        this.resetXhrState();
         this.startExportJsonPage(this.state.startpage, pushToLibre);
     }
 
@@ -171,32 +175,44 @@ export class App extends React.PureComponent<Props, State> {
     }
 
     pushToLibreFm(page: number, res: Scrobble[], cb: () => any) {
-        const syncScrobs = document.getElementById("synchronize-scrobbles");
+        const syncScrobs = document.getElementById("synchronize-scrobbles-output");
         if (syncScrobs) {
             const buckets = splitArray(res, 50);
             const container = document.createElement("div");
-            syncScrobs.appendChild(container);
+            const containerContainer = document.createElement("div");
+            container.className = "scrobble-page-holder";
+            const title = document.createElement("h3");
+            title.innerHTML = `Page ${page}`;
+            containerContainer.appendChild(title);
+            containerContainer.appendChild(container);
+            syncScrobs.appendChild(containerContainer);
             buckets.forEach((bucket, i) => {
                 const div = document.createElement("div");
-                div.style.width = `${100 / buckets.length}%`;
-                div.style.display = `inline-block`;
+                div.style.width = `${90 / buckets.length}%`;
+                div.className = "scrobble-output-holder";
                 const ifr = document.createElement("iframe");
-                ifr.style.width = `100%`;
-                ifr.style.display = "block";
-                ifr.style.height = "96px";
+                ifr.className = "output-librefm-scrobble";
                 const frameName = `${page}-${i + 1}`;
                 ifr.name = frameName;
                 const {form, submit} = this.createScrobbleForm(frameName, bucket);
                 form.style.width = `100%`;
-                submit.style.width = `100%`;
+                submit.className = "btn-scrobble-libre";
                 div.appendChild(ifr);
                 div.appendChild(form);
 
                 container.appendChild(div);
                 submit.click();
             });
-            setTimeout(cb, 2000);
-        } else alert("No element found with id 'synchronize-scrobbles'");
+            const close = document.createElement("div");
+            close.className = "btn-close";
+            close.style.width = `10%`;
+            close.style.display = "inline-block";
+            close.addEventListener("click", () => {
+                syncScrobs.removeChild(containerContainer);
+            });
+            container.appendChild(close);
+            setTimeout(cb, 2500);
+        } else alert("No element found with id 'synchronize-scrobbles-output'");
     }
 
     startExportJsonPage(startpage: number, pushToLibre: boolean) {
@@ -214,16 +230,17 @@ export class App extends React.PureComponent<Props, State> {
                 if (url === this.state.url) {
                     const totalPages1 = isFinite(this.state.totalPages) && this.state.totalPages > 0 ? this.state.totalPages : totalPages;
                     if (pushToLibre) {
-                        this.setState({
-                            totalPages: totalPages1,
-                            url: undefined,
-                            retrying: -400,
-                            scrobbles: res
-                        });
                         this.pushToLibreFm(startpage, res as Scrobble[], () => {
                             if (startpage < totalPages1) {
-                                // console.log(`${startpage} < ${totalPages1}`);
-                                this.startExportJsonPage(startpage + 1, pushToLibre);
+                                if (url === this.state.url) {
+                                    this.setState({
+                                        totalPages: totalPages1,
+                                        url: undefined,
+                                        retrying: -400,
+                                        scrobbles: res
+                                    });
+                                    this.startExportJsonPage(startpage + 1, pushToLibre);
+                                }
                             }
                         });
                     } else {
@@ -234,7 +251,6 @@ export class App extends React.PureComponent<Props, State> {
                             scrobbles: this.state.scrobbles.concat(res)
                         });
                         if (startpage < totalPages1) {
-                            // console.log(`${startpage} < ${totalPages1}`);
                             this.startExportJsonPage(startpage + 1, pushToLibre);
                         }
                     }
@@ -250,7 +266,7 @@ export class App extends React.PureComponent<Props, State> {
                 <div className="api-parameters">
                     <ApiParameter
                         currentValue={this.state.userLastFm}
-                        defaultValue=""
+                        defaultValue={this.props.user_last || ""}
                         title="Username"
                         htmlFor="username-lastfm"
                         onChange={e => {
@@ -266,7 +282,8 @@ export class App extends React.PureComponent<Props, State> {
                         onChange={e => {
                             this.setState({api_key: e.target.value});
                         }}>
-                        <a className="btn-side api-parameter-cell xsmall" href="https://www.last.fm/api/account/create">Request API key</a>
+                        <a className="btn-side api-parameter-cell xsmall" href="https://www.last.fm/api/account/create">Request
+                            API key</a>
                     </ApiParameter>
                     <ApiParameter
                         currentValue={this.state.api_method}
@@ -278,23 +295,20 @@ export class App extends React.PureComponent<Props, State> {
                         }}/>
                     <ApiParameter
                         currentValue={this.state.startpage}
-                        defaultValue="1"
+                        defaultValue={this.startpageDefault.toString()}
                         title="startpage"
                         htmlFor="api-startpage-lastfm"
                         onChange={(e => {
-                            const parseInt1 = parseInt(e.target.value);
-                            const startpage = isFinite(parseInt1) ? parseInt1 : Infinity;
-                            this.setState({startpage});
+                            this.setState({startpage: parseFiniteInt(e.target.value, Infinity)});
                         })}
                     />
                     <ApiParameter
                         htmlFor="api-lastpage-lastfm"
                         title="lastpage"
-                        defaultValue=""
+                        defaultValue={this.totalPagesDefault > 0 ? this.totalPagesDefault.toString() : ""}
                         currentValue={this.state.totalPages}
                         onChange={(e => {
-                            const parseInt1 = parseInt(e.target.value);
-                            this.setState({totalPages: isFinite(parseInt1) ? parseInt1 : Infinity});
+                            this.setState({totalPages: parseFiniteInt(e.target.value, Infinity)});
                         })}/>
                     <ApiParameter
                         htmlFor="api-results-per-page-lastfm"
@@ -386,7 +400,7 @@ export class App extends React.PureComponent<Props, State> {
                     <ApiParameter
                         htmlFor="api-username-libre"
                         title="Username"
-                        defaultValue=""
+                        defaultValue={this.props.user_libre || ""}
                         currentValue={this.state.libreUsername}
                         onChange={(e => {
                             const libreUsername = e.target.value;
@@ -440,6 +454,12 @@ export class App extends React.PureComponent<Props, State> {
                 </div>
             </section>
             <StatusLine {...this.state} scrobbleNum={this.state.scrobbles.length}/>
+
+            <section id="url-state" className={""}>
+                <h2>Save URL to continue in the future</h2>
+                <StateUrl {...this.state}/>
+            </section>
+
             <section id="synchronize-scrobbles" className={"subtitled"}>
                 <h2>Synchronize Last.fm scrobbles to Libre.fm</h2>
                 <div className="xsmall subtitle"><p>Scroll down the status windows to see if the scrobbles were
@@ -450,7 +470,7 @@ export class App extends React.PureComponent<Props, State> {
                 <div className="api-parameters">
                     <ApiParameter
                         currentValue={this.state.startpage}
-                        defaultValue="1"
+                        defaultValue={this.startpageDefault.toString()}
                         title="Start on Last.fm 'Recently Listened' page"
                         htmlFor="api-startpage-lastfm"
                         onChange={(e => {
@@ -462,7 +482,7 @@ export class App extends React.PureComponent<Props, State> {
                     <ApiParameter
                         htmlFor="api-lastpage-lastfm"
                         title="End on page (optional)"
-                        defaultValue=""
+                        defaultValue={this.totalPagesDefault > 0 ? this.totalPagesDefault.toString() : ""}
                         currentValue={this.state.totalPages}
                         onChange={(e => {
                             const parseInt1 = parseInt(e.target.value);
@@ -490,6 +510,13 @@ export class App extends React.PureComponent<Props, State> {
                     // // alert(connectApplicationLastFm(this.state.api_key) + "\n\n" + session);
                 }}>Synchronize Last.fm scrobbles to Libre.fm
                 </button>
+                <button onClick={() => {
+                    const currentRequest = this.state.xhr;
+                    if (currentRequest) currentRequest.abort();
+                    this.resetXhrState();
+                }}>Stop
+                </button>
+                <div id="synchronize-scrobbles-output"/>
             </section>
 
             <section>
@@ -498,19 +525,30 @@ export class App extends React.PureComponent<Props, State> {
                     scrobbles
                 </button>
                 <div>
-                    <input type="checkbox" id="show-output" name="show-output" defaultChecked={this.state.showJson} onChange={(e) => {
-                        this.setState({
-                            showJson: e.target.checked
-                        });
-                    }}/><label htmlFor="show-output">Show output</label>
+                    <input type="checkbox" id="show-output" name="show-output" defaultChecked={this.state.showJson}
+                           onChange={(e) => {
+                               this.setState({
+                                   showJson: e.target.checked
+                               });
+                           }}/><label htmlFor="show-output">Show output</label>
                     {
                         this.state.showJson
-                            ? <textarea className="output-json output-tall" value={JSON.stringify(this.state.scrobbles)}/>
+                            ?
+                            <textarea className="output-json output-tall" value={JSON.stringify(this.state.scrobbles)}/>
                             : ""
                     }
                 </div>
             </section>
         </div>;
+    }
+
+    private resetXhrState() {
+        this.setState({
+            errorMessage: null,
+            url: null,
+            xhr: null,
+            scrobbles: []
+        });
     }
 }
 

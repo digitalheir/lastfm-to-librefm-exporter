@@ -1,6 +1,7 @@
 import {md5hash} from "../md5";
 import {LibreScrobbleTrack} from "../librefm";
 import {makePostRequest} from "../fetch-url";
+import {urlEncodeParams} from "../util/collections";
 
 export const urlGetToken = (base_url: string, api_key: string, secret: string) => {
     const params = [
@@ -18,8 +19,6 @@ export const connectApplication = (baseUrl: string,
 // export const authorizeToken = (baseUrl: string,
 //                                apiKey: string,
 //                                token: string) => `${baseUrl}auth/?api_key=${apiKey}&token=${token}`;
-
-const urlEncodeParams = (params: string[][]) => params.map(p => `${p[0]}=${p[1]}`).join("&");
 
 export const createSessionUrl = (baseUrl: string,
                                  apiKey: string,
