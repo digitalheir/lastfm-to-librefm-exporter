@@ -498,14 +498,14 @@ export class App extends React.PureComponent<Props, State> {
                     scrobbles
                 </button>
                 <div>
-                    <input type="checkbox" name="show-output" defaultChecked={this.state.showJson} onChange={(e) => {
+                    <input type="checkbox" id="show-output" name="show-output" defaultChecked={this.state.showJson} onChange={(e) => {
                         this.setState({
                             showJson: e.target.checked
                         });
                     }}/><label htmlFor="show-output">Show output</label>
                     {
                         this.state.showJson
-                            ? <textarea className="output-json" value={JSON.stringify(this.state.scrobbles)}/>
+                            ? <textarea className="output-json output-tall" value={JSON.stringify(this.state.scrobbles)}/>
                             : ""
                     }
                 </div>

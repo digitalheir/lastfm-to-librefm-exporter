@@ -99,8 +99,17 @@ input {
     background-color: white;
 }
 
+textarea {
+    background-color: white;
+}
+
 input[type=submit] {
     background-color: #eee;
+}
+
+input[type=checkbox] {
+    background-color: #eee;
+    color: #333;
 }
 
 button {
@@ -128,4 +137,8 @@ input[type=text]:focus {
 
 .btn-side {
     margin-left: 1em;
+}
+
+.output-tall {
+    min-height: 144px;
 }
