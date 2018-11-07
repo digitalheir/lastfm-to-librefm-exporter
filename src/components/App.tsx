@@ -417,7 +417,7 @@ export class App extends React.PureComponent<Props, State> {
                                 ["token", this.state.libreToken],
                             ], this.state.libreSecret)}/>
                             <input value="Create session key"
-                                   className="btn-create-session"
+                                   className="btn-create-session btn-side"
                                    type="submit"
                                    onClick={() => {
                                        this.setState({

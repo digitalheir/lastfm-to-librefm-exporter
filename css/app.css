@@ -99,6 +99,10 @@ input {
     background-color: white;
 }
 
+input[type=submit] {
+    background-color: #eee;
+}
+
 button {
     background-color: #eee;
 }
