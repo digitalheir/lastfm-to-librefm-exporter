@@ -200,3 +200,20 @@ input[type=text]:focus {
 .scrobble-page-holder {
     position: relative;
 }
+
+.label-input-empty::before, .label-input-set::before {
+    padding-right: 12px;
+    font-size: 2em;
+    font-family: monospace;
+    font-size: 1.5em;
+    line-height: 48px;
+}
+
+.label-input-empty::before {
+    content: '∗';
+}
+
+.label-input-set::before {
+    color: #388e3c;
+    content: '✓';
+}
