@@ -60,133 +60,132 @@
     </svg>
 </a>
 <div id="mount-point">
-    <div id="app-root">
-        <section><h2>Last.fm parameters</h2>
-            <div class="api-parameters">
-                <div class="api-parameter"><label class="api-parameter-cell api-parameter-label label-input-empty"
-                                                  for="username-lastfm">Username</label><input
-                        disabled
-                        class="mdc-text-field api-parameter-cell api-parameter-input" id="username-lastfm" type="text"
-                        name="username-lastfm" value=""><a class="hidden api-parameter-cell xsmall"
-                                                           href="https://www.last.fm/user/">Profile</a></div>
-                <div class="api-parameter"><label class="api-parameter-cell api-parameter-label label-input-set"
-                                                  for="api-key-lastfm">API key</label><input
-                        class="mdc-text-field api-parameter-cell api-parameter-input" id="api-key-lastfm" type="text"
-                        name="api-key-lastfm" value=""><a class="api-parameter-cell xsmall"
-                                                          href="https://www.last.fm/api/account/create">Request API
-                    key</a></div>
-                <div class="api-parameter"><label class="api-parameter-cell api-parameter-label label-input-set"
-                                                  for="api-method-lastfm">API method</label><input
-                        class="mdc-text-field api-parameter-cell api-parameter-input" id="api-method-lastfm" type="text"
-                        name="api-method-lastfm" value="user.getrecenttracks"></div>
-                <div class="api-parameter"><label class="api-parameter-cell api-parameter-label label-input-set"
-                                                  for="api-startpage-lastfm2">startpage</label><input
-                        class="mdc-text-field api-parameter-cell api-parameter-input" id="api-startpage-lastfm2"
-                        type="text"
-                        name="api-startpage-lastfm" value="1"></div>
-                <div class="api-parameter"><label class="api-parameter-cell api-parameter-label label-input-set"
-                                                  for="api-lastpage-lastfm2">lastpage</label><input
-                        class="mdc-text-field api-parameter-cell api-parameter-input" id="api-lastpage-lastfm2"
-                        type="text"
-                        name="api-lastpage-lastfm" value=""></div>
-                <div class="api-parameter"><label class="api-parameter-cell api-parameter-label label-input-set"
-                                                  for="api-results-per-page-lastfm">Results per page (max
-                    200)</label><input class="mdc-text-field api-parameter-cell api-parameter-input"
-                                       id="api-results-per-page-lastfm" type="text"
-                                       name="api-results-per-page-lastfm" value="200"></div>
-            </div>
-            <div class="all-set hidden">✓ All Last.fm settings set</div>
-        </section>
-        <section><h2>Libre.fm settings</h2>
-            <div class="api-parameters">
-                <div class="api-parameter"><label class="api-parameter-cell api-parameter-label label-input-set"
-                                                  for="api-key-libre">API key</label><input
-                        class="mdc-text-field api-parameter-cell api-parameter-input" id="api-key-libre" type="text"
-                        name="api-key-libre" disabled value=""></div>
-                <div class="api-parameter"><label class="api-parameter-cell api-parameter-label label-input-set"
-                                                  for="api-secret-libre">Secret</label><input
-                        class="mdc-text-field api-parameter-cell api-parameter-input" id="api-secret-libre" type="text"
-                        name="api-secret-libre" disabled value=""></div>
-                <div class="api-parameter"><label class="api-parameter-cell api-parameter-label label-input-set"
-                                                  for="api-token-libre">Token</label><input
-                        class="mdc-text-field api-parameter-cell api-parameter-input" id="api-token-libre" type="text"
-                        name="api-token-libre" value="">
-                    <form action="https://libre.fm/2.0/" class="api-parameter-cell" target="myFrame" method="post">
-                        <input type="hidden" name="method" value="auth.getToken"><input type="hidden" name="api_key"
-                                                                                        value=""><input
-                            type="hidden" name="format" value="json"><input type="hidden" name="api_sig"
-                                                                            value=""><input
-                            type="submit" value="Create token"></form>
-                </div>
-                <div class="api-parameter"><span class="instruction hidden">Copy the token into the above field. So if the response is <code>{"token": "xyz"}</code>, copy <em>xyz</em> without the quotes.</span>
-                </div>
-                <div class="api-parameter">
-                    <iframe name="myFrame" id="myFrame" class="frame-output api-parameter-cell hidden"></iframe>
-                </div>
-                <div class="api-parameter">
-                    <form action="https://libre.fm/api/auth/" class="visible" target="_blank" method="post"><input
-                            type="hidden" name="api_key" value="r9i1y91hz71tcx7vyrp9hk1alhqp1888"><input type="hidden"
-                                                                                                         name="token"
-                                                                                                         value="1321321"><input
-                            class="btn-authorize-token btn-big" type="submit"
-                            value="Authorize this token to change your account"></form>
-                </div>
-                <div class="api-parameter"><label class="api-parameter-cell api-parameter-label label-input-set"
-                                                  for="api-username-libre">Username</label><input
-                        class="mdc-text-field api-parameter-cell api-parameter-input" id="api-username-libre"
-                        type="text"
-                        name="api-username-libre" disabled value=""><a class="visible api-parameter-cell xsmall"
-                                                                       href="https://libre.fm/user/dfgdsfggfd">Profile</a>
-                </div>
-                <div class="api-parameter"><label class="api-parameter-cell api-parameter-label label-input-set"
-                                                  for="api-sk-libre">Session key</label><input
-                        class="mdc-text-field api-parameter-cell api-parameter-input" id="api-sk-libre" type="text"
-                        name="api-sk-libre" disabled value="">
-                    <form action="https://libre.fm/2.0/" class="api-parameter-cell visible" target="get-session-output"
-                          method="post"><input type="hidden" name="method" value="auth.getSession"><input type="hidden"
-                                                                                                          name="api_key"
-                                                                                                          value="r9i1y91hz71tcx7vyrp9hk1alhqp1888"><input
-                            type="hidden" name="token" value="1321321"><input type="hidden" name="format"
-                                                                              value="json"><input type="hidden"
-                                                                                                  name="api_sig"
-                                                                                                  value="0820d33fe823b790bccdf81def421dd5"><input
-                            class="btn-create-session" type="submit" value="Create session key"></form>
-                    <div class="api-parameter"><span class="instruction hidden">Copy the username and session key into the above field. So if the response is {"key": "xyz"}, copy <em>xyz</em> without the quotes.</span>
-                    </div>
-                    <iframe name="get-session-output" class="frame-output hidden"></iframe>
-                </div>
-                <div class="all-set visible">✓ All Libre.fm settings set</div>
-            </div>
-        </section>
-        <div class="status">
-            <div class="status-line-page">Infinity / Infinity (0 scrobbles so far)</div>
-            <div class="status-line"></div>
+    <section><h2>Last.fm parameters</h2>
+        <div class="api-parameters">
+            <div class="api-parameter"><label class="api-parameter-cell api-parameter-label label-input-empty"
+                                              for="username-lastfm">Username</label><input
+                    disabled
+                    class="mdc-text-field api-parameter-cell api-parameter-input" id="username-lastfm" type="text"
+                    name="username-lastfm" value=""><a class="hidden api-parameter-cell xsmall"
+                                                       href="https://www.last.fm/user/">Profile</a></div>
+            <div class="api-parameter"><label class="api-parameter-cell api-parameter-label label-input-set"
+                                              for="api-key-lastfm">API key</label><input
+                    class="mdc-text-field api-parameter-cell api-parameter-input" id="api-key-lastfm" type="text"
+                    name="api-key-lastfm" value=""><a class="api-parameter-cell xsmall"
+                                                      href="https://www.last.fm/api/account/create">Request API
+                key</a></div>
+            <div class="api-parameter"><label class="api-parameter-cell api-parameter-label label-input-set"
+                                              for="api-method-lastfm">API method</label><input
+                    class="mdc-text-field api-parameter-cell api-parameter-input" id="api-method-lastfm" type="text"
+                    name="api-method-lastfm" value="user.getrecenttracks"></div>
+            <div class="api-parameter"><label class="api-parameter-cell api-parameter-label label-input-set"
+                                              for="api-startpage-lastfm2">startpage</label><input
+                    class="mdc-text-field api-parameter-cell api-parameter-input" id="api-startpage-lastfm2"
+                    type="text"
+                    name="api-startpage-lastfm" value="1"></div>
+            <div class="api-parameter"><label class="api-parameter-cell api-parameter-label label-input-set"
+                                              for="api-lastpage-lastfm2">lastpage</label><input
+                    class="mdc-text-field api-parameter-cell api-parameter-input" id="api-lastpage-lastfm2"
+                    type="text"
+                    name="api-lastpage-lastfm" value=""></div>
+            <div class="api-parameter"><label class="api-parameter-cell api-parameter-label label-input-set"
+                                              for="api-results-per-page-lastfm">Results per page (max
+                200)</label><input class="mdc-text-field api-parameter-cell api-parameter-input"
+                                   id="api-results-per-page-lastfm" type="text"
+                                   name="api-results-per-page-lastfm" value="200"></div>
         </div>
-        <section id="synchronize-scrobbles" class="subtitled"><h2>Synchronize Last.fm scrobbles to Libre.fm</h2>
-            <div class="xsmall subtitle"><p>Scroll down the status windows to see if the scrobbles were succesful. Look
-                for something like: <code>"@attr":{"accepted":"x","ignored":"y"}}}</code></p>
-                <p>You do not need to worry about tracks being scrobbled more than once. Duplicates are ignored
-                    automatically.</p></div>
-            <div class="api-parameters">
-                <div class="api-parameter"><label class="api-parameter-cell api-parameter-label label-input-set"
-                                                  for="api-startpage-lastfm">Start on Last.fm 'Recently Listened'
-                    page</label><input class="mdc-text-field api-parameter-cell api-parameter-input"
-                                       id="api-startpage-lastfm" type="text"
-                                       name="api-startpage-lastfm" value="1"></div>
-                <div class="api-parameter"><label class="api-parameter-cell api-parameter-label label-input-set"
-                                                  for="api-lastpage-lastfm">End on page (optional)</label><input
-                        class="mdc-text-field api-parameter-cell api-parameter-input" id="api-lastpage-lastfm"
-                        type="text"
-                        name="api-lastpage-lastfm" value=""></div>
+        <div class="all-set hidden">✓ All Last.fm settings set</div>
+    </section>
+    <section><h2>Libre.fm settings</h2>
+        <div class="api-parameters">
+            <div class="api-parameter"><label class="api-parameter-cell api-parameter-label label-input-set"
+                                              for="api-key-libre">API key</label><input
+                    class="mdc-text-field api-parameter-cell api-parameter-input" id="api-key-libre" type="text"
+                    name="api-key-libre" disabled value=""></div>
+            <div class="api-parameter"><label class="api-parameter-cell api-parameter-label label-input-set"
+                                              for="api-secret-libre">Secret</label><input
+                    class="mdc-text-field api-parameter-cell api-parameter-input" id="api-secret-libre" type="text"
+                    name="api-secret-libre" disabled value=""></div>
+            <div class="api-parameter"><label class="api-parameter-cell api-parameter-label label-input-set"
+                                              for="api-token-libre">Token</label><input
+                    class="mdc-text-field api-parameter-cell api-parameter-input" id="api-token-libre" type="text"
+                    name="api-token-libre" value="">
+                <form action="https://libre.fm/2.0/" class="api-parameter-cell" target="myFrame" method="post">
+                    <input type="hidden" name="method" value="auth.getToken"><input type="hidden" name="api_key"
+                                                                                    value=""><input
+                        type="hidden" name="format" value="json"><input type="hidden" name="api_sig"
+                                                                        value=""><input
+                        type="submit" value="Create token"></form>
             </div>
-            <button>Synchronize Last.fm scrobbles to Libre.fm</button>
-        </section>
-        <section><h2>Last.fm export only</h2>
-            <button class="btn-export btn-big">Export Last.fm scrobbles</button>
-            <div><input type="checkbox" name="show-output" id="show-output" checked=""><label for="show-output">Show
-                output</label><textarea class="output-json"/></div>
-        </section>
+            <div class="api-parameter"><span class="instruction hidden">Copy the token into the above field. So if the response is <code>{"token": "xyz"}</code>, copy <em>xyz</em> without the quotes.</span>
+            </div>
+            <div class="api-parameter">
+                <iframe name="myFrame" id="myFrame" class="frame-output api-parameter-cell hidden"></iframe>
+            </div>
+            <div class="api-parameter">
+                <form action="https://libre.fm/api/auth/" class="visible" target="_blank" method="post"><input
+                        type="hidden" name="api_key" value="r9i1y91hz71tcx7vyrp9hk1alhqp1888"><input type="hidden"
+                                                                                                     name="token"
+                                                                                                     value="1321321"><input
+                        class="btn-authorize-token btn-big" type="submit"
+                        value="Authorize this token to change your account"></form>
+            </div>
+            <div class="api-parameter"><label class="api-parameter-cell api-parameter-label label-input-set"
+                                              for="api-username-libre">Username</label><input
+                    class="mdc-text-field api-parameter-cell api-parameter-input" id="api-username-libre"
+                    type="text"
+                    name="api-username-libre" disabled value=""><a class="visible api-parameter-cell xsmall"
+                                                                   href="https://libre.fm/user/dfgdsfggfd">Profile</a>
+            </div>
+            <div class="api-parameter"><label class="api-parameter-cell api-parameter-label label-input-set"
+                                              for="api-sk-libre">Session key</label><input
+                    class="mdc-text-field api-parameter-cell api-parameter-input" id="api-sk-libre" type="text"
+                    name="api-sk-libre" disabled value="">
+                <form action="https://libre.fm/2.0/" class="api-parameter-cell visible" target="get-session-output"
+                      method="post"><input type="hidden" name="method" value="auth.getSession"><input type="hidden"
+                                                                                                      name="api_key"
+                                                                                                      value="r9i1y91hz71tcx7vyrp9hk1alhqp1888"><input
+                        type="hidden" name="token" value="1321321"><input type="hidden" name="format"
+                                                                          value="json"><input type="hidden"
+                                                                                              name="api_sig"
+                                                                                              value="0820d33fe823b790bccdf81def421dd5"><input
+                        class="btn-create-session" type="submit" value="Create session key"></form>
+                <div class="api-parameter"><span class="instruction hidden">Copy the username and session key into the above field. So if the response is {"key": "xyz"}, copy <em>xyz</em> without the quotes.</span>
+                </div>
+                <iframe name="get-session-output" class="frame-output hidden"></iframe>
+            </div>
+            <div class="all-set visible">✓ All Libre.fm settings set</div>
+        </div>
+    </section>
+    <div class="status">
+        <div class="status-line-page">Infinity / Infinity (0 scrobbles so far)</div>
+        <div class="status-line"></div>
     </div>
+    <section id="synchronize-scrobbles" class="subtitled"><h2>Synchronize Last.fm scrobbles to Libre.fm</h2>
+        <div class="xsmall subtitle"><p>Scroll down the status windows to see if the scrobbles were succesful. Look
+            for something like: <code>"@attr":{"accepted":"x","ignored":"y"}}}</code></p>
+            <p>You do not need to worry about tracks being scrobbled more than once. Duplicates are ignored
+                automatically.</p></div>
+        <div class="api-parameters">
+            <div class="api-parameter"><label class="api-parameter-cell api-parameter-label label-input-set"
+                                              for="api-startpage-lastfm">Start on Last.fm 'Recently Listened'
+                page</label><input class="mdc-text-field api-parameter-cell api-parameter-input"
+                                   id="api-startpage-lastfm" type="text"
+                                   name="api-startpage-lastfm" value="1"></div>
+            <div class="api-parameter"><label class="api-parameter-cell api-parameter-label label-input-set"
+                                              for="api-lastpage-lastfm">End on page (optional)</label><input
+                    class="mdc-text-field api-parameter-cell api-parameter-input" id="api-lastpage-lastfm"
+                    type="text"
+                    name="api-lastpage-lastfm" value=""></div>
+        </div>
+        <button>Synchronize Last.fm scrobbles to Libre.fm</button>
+    </section>
+    <section><h2>Last.fm export only</h2>
+        <button class="btn-export btn-big">Export Last.fm scrobbles</button>
+        <div><input type="checkbox" name="show-output" id="show-output" checked=""><label for="show-output">Show
+            output</label>
+            <textarea class="output-json"></textarea></div>
+    </section>
 </div>
 <script src="js/app.js"></script>
 <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->

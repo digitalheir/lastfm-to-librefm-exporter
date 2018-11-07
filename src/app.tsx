@@ -19,7 +19,11 @@ import {parseUrlParams} from "./browser";
 const mountPoint = document.getElementById("mount-point");
 const l = window ? window.location : null;
 const params = parseUrlParams(l ? l.search : null);
-if (mountPoint) render(<App {...params}/>, mountPoint);
+if (mountPoint) {
+    console.log("Emptying mount-point");
+    mountPoint.innerHTML = "";
+    render(<App {...params}/>, mountPoint);
+}
 
 // if ('serviceWorker' in navigator) {
 //   navigator.serviceWorker.register('js/service-worker.js', {
