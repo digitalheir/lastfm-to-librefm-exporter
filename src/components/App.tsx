@@ -173,9 +173,7 @@ export class App extends React.PureComponent<Props, State> {
     pushToLibreFm(page: number, res: Scrobble[], cb: () => any) {
         const syncScrobs = document.getElementById("synchronize-scrobbles");
         if (syncScrobs) {
-            const iframes = [];
             const buckets = splitArray(res, 50);
-
             const container = document.createElement("div");
             syncScrobs.appendChild(container);
             buckets.forEach((bucket, i) => {
@@ -340,7 +338,6 @@ export class App extends React.PureComponent<Props, State> {
                             this.setState({libreSecret: e.target.value});
                         })}/>
                     <ApiParameter
-                        id="api-token-libre"
                         htmlFor="api-token-libre"
                         title="Token"
                         defaultValue={this.props.token}
@@ -398,7 +395,6 @@ export class App extends React.PureComponent<Props, State> {
                            href={`https://libre.fm/user/${this.state.libreUsername}`}>Profile</a>
                     </ApiParameter>
                     <ApiParameter
-                        id="api-sk-libre"
                         htmlFor="api-sk-libre"
                         title="Session key"
                         defaultValue={this.props.sk || ""}

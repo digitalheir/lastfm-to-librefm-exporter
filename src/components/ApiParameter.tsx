@@ -8,7 +8,6 @@ function classNameInput(value: any) {
 interface ApiParameterProps {
     defaultValue: string;
     type?: string;
-    id?: string;
     currentValue: any;
     title: string;
     htmlFor: string;
@@ -16,7 +15,6 @@ interface ApiParameterProps {
 }
 
 export const ApiParameter: StatelessComponent<ApiParameterProps> = ({
-                                                                        id,
                                                                         children,
                                                                         defaultValue,
                                                                         currentValue,
@@ -29,10 +27,10 @@ export const ApiParameter: StatelessComponent<ApiParameterProps> = ({
         <label className={"api-parameter-cell api-parameter-label " + classNameInput(currentValue)}
                htmlFor={htmlFor}>{title}</label>
         <input className="mdc-text-field api-parameter-cell api-parameter-input"
-               id={id ? id : ""}
                defaultValue={defaultValue}
                type={type || "text"}
                name={htmlFor}
+               id={htmlFor}
                onChange={onChange}/>
         {children}
     </div>;
