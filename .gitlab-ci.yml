@@ -6,6 +6,6 @@ pages:
   - echo 'Building static page'
   artifacts:
     paths:
-    - ./
+    - css
   only:
   - master
