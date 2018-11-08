@@ -1,0 +1,11 @@
+image: alpine:latest
+
+pages:
+  stage: deploy
+  script:
+  - echo 'Building static page'
+  artifacts:
+    paths:
+    - ./
+  only:
+  - master
