@@ -1,11 +1,11 @@
-image: alpine:latest
-
 pages:
   stage: deploy
   script:
-  - echo 'Building static page'
+  - mkdir .public
+  - cp -r * .public
+  - mv .public public
   artifacts:
     paths:
-    - css
+    - public
   only:
   - master
