@@ -2,13 +2,13 @@ import * as React from "react";
 import {ApiParameter} from "./ApiParameter";
 import {StatusLine} from "./StatusLine";
 import {parseRawScrobble, Scrobble} from "../parse_track";
-import {apiMethodDefault, createUrl} from "../lastfm";
+import {apiMethodDefault} from "../lastfm";
 import {makeGetRequest} from "../fetch-url";
 import {
     apiAuthEndpointFor,
     apiEndpointFor,
     constructSignatureForParams,
-    createScrobbleForm
+    createScrobbleForm, createUrl
 } from "../scrobbler/scrobbler_api";
 import {splitArray} from "../util/collections";
 import {StateUrl} from "./StateUrl";
@@ -18,6 +18,8 @@ import {SubtitledSection} from "./SubtitledSection";
 import {BtnSideUserProfileUrl} from "./BtnSideUserProfileUrl";
 import {ShowOutput} from "./ShowOutput";
 import {default_key, default_secret} from "../scrobbler/libreConstants";
+import {SelectScrobbler} from "./SelectScrobbler";
+import {BtnSideRequestApiKey} from "./BtnSideRequestApiKey";
 
 interface State {
     retrying: number;
@@ -49,10 +51,12 @@ interface Props {
     token?: string;
     secret?: string;
     sk?: string;
-    user_libre?: string;
-    user_last?: string;
+    toUsername?: string;
+    fromUser?: string;
     startpage?: string;
     totalPages?: string;
+    importTo?: string;
+    exportFrom?: string;
 }
 
 const resultsPerPageLastFmDefault = 200;
@@ -61,17 +65,19 @@ export class App extends React.PureComponent<Props, State> {
     private readonly apiKeyDefault = this.props.fromApiKey || "e38cc7822bd7476fe4083e36ee69748e";
     private readonly startpageDefault = parseFiniteInt(this.props.startpage, 1);
     private readonly totalPagesDefault = parseFiniteInt(this.props.totalPages, -1);
+    private readonly exportFromDefault = this.props.exportFrom || "Last.fm";
+    private readonly importToDefault = this.props.importTo || "Libre.fm";
     state = {
         showTokenInstruction: false,
         showSessionInstruction: false,
-        toUsername: this.props.user_libre || "",
+        toUsername: this.props.toUsername || "",
         toApiKey: this.props.toApiKey || default_key,
         toToken: this.props.token || "",
         toSecret: this.props.secret || default_secret,
         toSessionKey: this.props.sk || "",
         fromApiKey: this.apiKeyDefault,
         api_method: apiMethodDefault,
-        fromUser: this.props.user_last || "",
+        fromUser: this.props.fromUser || "",
         scrobbles: [],
         startpage: this.startpageDefault,
         totalPages: this.totalPagesDefault,
@@ -81,8 +87,8 @@ export class App extends React.PureComponent<Props, State> {
         errorMessage: null,
         xhr: null,
         showJson: false,
-        exportFrom: "Last.fm",
-        importTo: "Libre.fm",
+        exportFrom: this.exportFromDefault,
+        importTo: this.importToDefault,
     };
 
     fetchUrl(url: string, cb: (p: number, res: any, err: any) => any, timeout: number = -1) {
@@ -187,7 +193,7 @@ export class App extends React.PureComponent<Props, State> {
     }
 
     startExportJsonPage(startpage: number, pushToLibre: boolean) {
-        const url = createUrl(this.state.api_method, this.state.fromUser, this.state.fromApiKey, startpage, this.state.resultsPerPageLastFm);
+        const url = createUrl(this.state.api_method, this.state.exportFrom, this.state.fromUser, this.state.fromApiKey, startpage, this.state.resultsPerPageLastFm);
         const currentRequest = this.state.xhr;
         if (currentRequest) currentRequest.abort();
         this.setState({
@@ -232,12 +238,21 @@ export class App extends React.PureComponent<Props, State> {
 
     render() {
         return <div id="app-root">
+            <p>Export tracks from <SelectScrobbler selected={this.state.exportFrom} onChange={
+                (e) => this.setState({exportFrom: e.target.value})
+            }/> and import them to <SelectScrobbler selected={this.state.importTo} onChange={
+                (e) => this.setState({importTo: e.target.value})
+            }/>. If you encounter any problems, <a
+                href="https://github.com/digitalheir/lastfm-to-librefm-exporter/issues/new">leave a note</a>.</p>
+            <p className={`warning ${this.state.exportFrom === "Libre.fm" ? "visible" : "hidden"}`}>NOTE: the Libre.fm
+                API is (probably) currently not supported for exporting, because
+                the website (at the time of authorship) does not support CORS.</p>
             <section>
-                <h2>{this.state.exportFrom} parameters</h2>
+                <h2>{this.state.exportFrom} parameters (export)</h2>
                 <div className="api-parameters">
                     <ApiParameter
                         currentValue={this.state.fromUser}
-                        defaultValue={this.props.user_last || ""}
+                        defaultValue={this.props.fromUser || ""}
                         title="Username"
                         htmlFor="username-lastfm"
                         onChange={e => {
@@ -249,15 +264,13 @@ export class App extends React.PureComponent<Props, State> {
                     </ApiParameter>
                     <ApiParameter
                         currentValue={this.state.fromApiKey}
-                        defaultValue={this.props.fromApiKey || ""}
+                        defaultValue={(this.props.fromApiKey && "e38cc7822bd7476fe4083e36ee69748e" !== this.props.fromApiKey) ? this.props.fromApiKey : ""}
                         title="API key"
                         htmlFor="api-key-lastfm"
                         onChange={e => {
                             this.setState({fromApiKey: e.target.value});
                         }}>
-                        <a className="btn-side api-parameter-cell xsmall"
-                           href={apiAuthEndpointFor(this.state.exportFrom) + "account/create"}>Request
-                            API key</a>
+                        <BtnSideRequestApiKey scrobbler={this.state.exportFrom}/>
                     </ApiParameter>
                     <ApiParameter
                         currentValue={this.state.api_method}
@@ -303,7 +316,7 @@ export class App extends React.PureComponent<Props, State> {
             </section>
 
 
-            <SubtitledSection title={`${this.state.importTo} parameters`}
+            <SubtitledSection title={`${this.state.importTo} parameters (import)`}
                               id="librefm-settings">
                 <div className="xsmall subtitle">You need create an access token and start a session to allow this
                     website to add scrobbled tracks to your account
@@ -317,7 +330,7 @@ export class App extends React.PureComponent<Props, State> {
                         onChange={(e => {
                             const toApiKey = e.target.value;
                             this.setState({toApiKey});
-                        })}/>
+                        })}><BtnSideRequestApiKey scrobbler={this.state.importTo}/></ApiParameter>
 
                     <ApiParameter
                         htmlFor="api-secret-libre"
@@ -378,7 +391,7 @@ export class App extends React.PureComponent<Props, State> {
                     <ApiParameter
                         htmlFor="api-username-libre"
                         title="Username"
-                        defaultValue={this.props.user_libre || ""}
+                        defaultValue={this.props.toUsername || ""}
                         currentValue={this.state.toUsername}
                         onChange={(e => {
                             const toUsername = e.target.value;

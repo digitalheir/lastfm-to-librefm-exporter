@@ -106,14 +106,41 @@ const sortByKey = (data: string[][]) => data.sort((a, b) => a[0] < b[0] ? -1 : a
 export const constructSignatureForParams = (data: string[][], secret: string): string => md5hash(
     `${sortByKey(data).map(pair => pair[0] + pair[1])}${secret}`);
 
-export const getUserProfileUrl = (scrobbler: string, username: string) =>
-    (scrobbler === "Libre.fm") ? `https://libre.fm/user/${username}` : `https://www.last.fm/user/${username}`;
+export const getUserProfileUrl = (scrobbler: string, username: string): string => {
+    switch (scrobbler) {
+        case "Libre.fm":
+            return `https://libre.fm/user/${username}`;
+        case "Last.fm":
+            return `https://www.last.fm/user/${username}`;
+        // fallback
+        default:
+            return `https://libre.fm/user/${username}`;
+    }
+};
 
-export const apiEndpointFor = (scrobbler: string) =>
-    (scrobbler === "Libre.fm") ? libre2_0 : last2_0;
+export const apiEndpointFor = (scrobbler: string): string => {
+    switch (scrobbler) {
+        case "Libre.fm":
+            return libre2_0;
+        case "Last.fm":
+            return last2_0;
+        // fallback
+        default:
+            return last2_0;
+    }
+};
 
-export const apiAuthEndpointFor = (scrobbler: string) =>
-    (scrobbler === "Libre.fm") ? libreApi : lastApi;
+export const apiAuthEndpointFor = (scrobbler: string): string => {
+    switch (scrobbler) {
+        case "Libre.fm":
+            return libreApi;
+        case "Last.fm":
+            return lastApi;
+        // fallback
+        default:
+            return lastApi;
+    }
+};
 
 export function createScrobbleForm(frameName: string,
                                    scrobbler: string,
@@ -148,3 +175,11 @@ export function createScrobbleForm(frameName: string,
     form.appendChild(inp);
     return {form, submit};
 }
+
+export const createUrl = (api_method: string,
+                          scrobbler: string,
+                          fromUser: string,
+                          api_key: string,
+                          startpage: number,
+                          limit: number = 2) =>
+    `${apiEndpointFor(scrobbler)}?method=${api_method}&user=${fromUser}&api_key=${api_key}&limit=${limit}&page=${startpage}&format=json`;

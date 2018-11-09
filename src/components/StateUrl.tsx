@@ -4,6 +4,8 @@ import {urlEncodeParams} from "../util/collections";
 
 interface StateState {
     fromApiKey: string;
+    importTo: string;
+    exportFrom: string;
     showJson: boolean;
     fromUser: string;
     toUsername: string;
@@ -19,17 +21,24 @@ function pushIfAvailable(v: string, params: string[][], k: string) {
     if (v) params.push([k, v]);
 }
 
+function pushIfAvailable2(s: any, params: string[][], k: string) {
+    const v = s[k];
+    if (v) params.push([k, v.toString()]);
+}
+
 function createSaveUrl(s: StateState): string {
     const params: string[][] = [];
-    pushIfAvailable(s.fromApiKey, params, "fromApiKey");
-    pushIfAvailable(s.toApiKey, params, "toApiKey");
+    pushIfAvailable2(s, params, "fromApiKey");
+    pushIfAvailable2(s, params, "toApiKey");
     pushIfAvailable(s.toToken, params, "token");
     pushIfAvailable(s.toSecret, params, "secret");
     pushIfAvailable(s.toSessionKey, params, "sk");
-    pushIfAvailable(s.toUsername, params, "user_libre");
-    pushIfAvailable(s.fromUser, params, "user_last");
-    pushIfAvailable(s.startpage.toString(), params, "startpage");
-    pushIfAvailable(s.totalPages.toString(), params, "totalPages");
+    pushIfAvailable2(s, params, "toUsername");
+    pushIfAvailable2(s, params, "fromUser");
+    pushIfAvailable2(s, params, "importTo");
+    pushIfAvailable2(s, params, "exportFrom");
+    pushIfAvailable2(s, params, "startpage");
+    pushIfAvailable2(s, params, "totalPages");
     return `https://digitalheir.github.io/lastfm-to-librefm-exporter/?${urlEncodeParams(params, true)}`;
 }
 

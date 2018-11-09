@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>Last.fm exporter / Libre.fm importer</title>
-    <meta name="description" content="Dictionary and stemmer for the Cebuano language spoken in the Philippines">
+    <meta name="description" content="Export scrobbled tracks from Last.fm and import them to Libre.fm or Scrobble.fm">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="canonical" href="https://digitalheir.github.io/lastfm-to-librefm-exporter/"/>
     <!--<link rel="apple-touch-icon" href="apple-touch-icon.png">-->
@@ -265,7 +265,12 @@
         padding-left: 1em;
     }
 
-    .show-output-wrapper{
+    .warning {
+        color: red;
+        font-weight: bold;
+    }
+
+    .show-output-wrapper {
         margin-top: 1em;
         margin-bottom: 1em;
     }
@@ -342,9 +347,7 @@
     your browser</a> to improve your experience.</p>
 <![endif]-->
 <section id="introduction"><h1>Last.fm exporter / Libre.fm importer</h1>
-    <p>Export tracks from <a href="https://www.last.fm">Last.fm</a> and import them to <a
-            href="https://libre.fm">Libre.fm</a>. If you encounter any problems, <a
-            href="https://github.com/digitalheir/lastfm-to-librefm-exporter/issues/new">leave a note</a>.</p></section>
+</section>
 <a href="https://github.com/digitalheir/lastfm-to-librefm-exporter" class="github-corner">
     <svg width="80" height="80" viewBox="0 0 250 250"
          style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;">
@@ -356,6 +359,9 @@
     </svg>
 </a>
 <div id="mount-point">
+    <p>Export tracks from <a href="https://www.last.fm">Last.fm</a> and import them to <a
+            href="https://libre.fm">Libre.fm</a>. If you encounter any problems, <a
+            href="https://github.com/digitalheir/lastfm-to-librefm-exporter/issues/new">leave a note</a>.</p>
     <section><h2>Last.fm parameters</h2>
         <div class="api-parameters">
             <div class="api-parameter"><label class="api-parameter-cell api-parameter-label label-input-empty"
