@@ -1,7 +1,7 @@
 {
   "name": "lastfm-to-librefm-exporter",
   "version": "1.0.0",
-  "description": "Export tracks from Last.fm and import them to Libre.fm",
+  "description": "Export tracks from Last.fm and import them to Libre.fm or Scrobble.fm",
   "private": false,
   "scripts": {
     "start": "npm run dev",
