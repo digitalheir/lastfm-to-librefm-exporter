@@ -3,7 +3,7 @@ https://digitalheir.github.io/lastfm-to-librefm-exporter/
 
 A Last.fm exporter as a web app, requiring no installation. You can use this software to back up your scrobble history from [Last.fm](https://www.last.fm) or backup your scrobble history from [Libre.fm](https://libre.fm/).
 
-This program is modeled loosely after the program _[lastscrape-gui](https://github.com/encukou/lastscrape-gui)_. The difference is that for _lastscrape-gui_ you have to install Python and the Qt framework, and you might not want to take this effort.
+This program is modeled loosely after the program _[lastscrape-gui](https://github.com/encukou/lastscrape-gui)_. The difference is that for _lastscrape-gui_ you have to install Python and the Qt framework on your machine, and you might not want to take this effort. This app works directly from the browser.
 
 Precautions are roughly the same as described in [this reddit post](https://www.reddit.com/r/foobar2000/comments/3zaiy6/guide_to_librefm_scrobbling_lastfm_backup_to/) under the section "Backing up from last.fm to libre.fm":
 
