@@ -1,7 +1,10 @@
 import {md5hash} from "../md5";
-import {LibreScrobbleTrack} from "../librefm";
+import {convertToLibreScrobbles, LibreScrobbleTrack} from "../librefm";
 import {makePostRequest} from "../fetch-url";
 import {urlEncodeParams} from "../util/collections";
+import {last2_0, lastApi} from "./lastConstants";
+import {libre2_0, libreApi} from "./libreConstants";
+import {Scrobble} from "../parse_track";
 
 export const urlGetToken = (base_url: string, api_key: string, secret: string) => {
     const params = [
@@ -102,3 +105,46 @@ const sortByKey = (data: string[][]) => data.sort((a, b) => a[0] < b[0] ? -1 : a
 
 export const constructSignatureForParams = (data: string[][], secret: string): string => md5hash(
     `${sortByKey(data).map(pair => pair[0] + pair[1])}${secret}`);
+
+export const getUserProfileUrl = (scrobbler: string, username: string) =>
+    (scrobbler === "Libre.fm") ? `https://libre.fm/user/${username}` : `https://www.last.fm/user/${username}`;
+
+export const apiEndpointFor = (scrobbler: string) =>
+    (scrobbler === "Libre.fm") ? libre2_0 : last2_0;
+
+export const apiAuthEndpointFor = (scrobbler: string) =>
+    (scrobbler === "Libre.fm") ? libreApi : lastApi;
+
+export function createScrobbleForm(frameName: string,
+                                   scrobbler: string,
+                                   apiKey: string,
+                                   sk: string,
+                                   secret: string,
+                                   tracks: Scrobble[]) {
+    const form = document.createElement("form");
+    //form.appendChild(input("",true));
+    form.target = frameName;
+    form.method = "post";
+    form.action = apiEndpointFor(scrobbler);
+
+    const submit = document.createElement("input");
+    submit.type = "submit";
+    submit.value = `Retry scrobbling ${tracks.length} tracks to ${scrobbler}`;
+    form.appendChild(submit);
+
+    const formData = createScrobbleFormData(convertToLibreScrobbles(tracks), apiKey, sk, secret);
+    formData.forEach((v, k) => {
+        const inp = document.createElement("input");
+        inp.type = "hidden";
+        // inp.type = "text";
+        inp.value = v.toString();
+        inp.name = k;
+        form.appendChild(inp);
+    });
+    const inp = document.createElement("input");
+    inp.type = "hidden";
+    inp.value = "json";
+    inp.name = "format";
+    form.appendChild(inp);
+    return {form, submit};
+}

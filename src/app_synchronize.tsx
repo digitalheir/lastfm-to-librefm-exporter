@@ -3,8 +3,8 @@
 // import {App} from "./components/App";
 import {parseUrlParams} from "./browser";
 import {createSessionUrl} from "./scrobbler/scrobbler_api";
-import {libre2_0} from "./librefm";
 import {makeGetRequest} from "./fetch-url";
+import {libre2_0} from "./scrobbler/libreConstants";
 
 const mountPoint = document.getElementById("mount-point");
 const l = window ? window.location : null;

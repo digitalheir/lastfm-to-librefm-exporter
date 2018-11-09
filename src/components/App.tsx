@@ -4,39 +4,48 @@ import {StatusLine} from "./StatusLine";
 import {parseRawScrobble, Scrobble} from "../parse_track";
 import {apiMethodDefault, createUrl} from "../lastfm";
 import {makeGetRequest} from "../fetch-url";
-import {createScrobbleForm, libre2_0, libreApi} from "../librefm";
-import {constructSignatureForParams} from "../scrobbler/scrobbler_api";
+import {
+    apiAuthEndpointFor,
+    apiEndpointFor,
+    constructSignatureForParams,
+    createScrobbleForm
+} from "../scrobbler/scrobbler_api";
 import {splitArray} from "../util/collections";
 import {StateUrl} from "./StateUrl";
 import {parseFiniteInt} from "../util/number";
 import {div} from "../util/dom";
+import {SubtitledSection} from "./SubtitledSection";
+import {BtnSideUserProfileUrl} from "./BtnSideUserProfileUrl";
+import {ShowOutput} from "./ShowOutput";
+import {default_key, default_secret} from "../scrobbler/libreConstants";
 
 interface State {
     retrying: number;
     startpage: number;
     url: string | null;
-    api_key: string;
+    fromApiKey: string;
     showJson: boolean;
     showTokenInstruction: boolean;
     showSessionInstruction: boolean;
-    userLastFm: string;
+    fromUser: string;
     api_method: string;
     scrobbles: any[];
     totalPages: number;
     resultsPerPageLastFm: number;
     errorMessage: string | null;
     xhr: XMLHttpRequest | null;
-    libreUsername: string;
-    librePassword: string;
-    libreToken: string;
-    libreApiKey: string;
-    libreSecret: string;
-    libreSessionKey: string;
+    toUsername: string;
+    toToken: string;
+    toApiKey: string;
+    toSecret: string;
+    toSessionKey: string;
+    exportFrom: string;
+    importTo: string;
 }
 
 interface Props {
-    api_key?: string;
-    api_key_libre?: string;
+    fromApiKey?: string;
+    toApiKey?: string;
     token?: string;
     secret?: string;
     sk?: string;
@@ -46,27 +55,23 @@ interface Props {
     totalPages?: string;
 }
 
-const default_key = "r9i1y91hz71tcx7vyrp9hk1alhqp1888";
-const default_secret = "21dsgf56dfg13df5g46sd85769gt45fd";
-
 const resultsPerPageLastFmDefault = 200;
 
 export class App extends React.PureComponent<Props, State> {
-    private readonly apiKeyDefault = this.props.api_key || "e38cc7822bd7476fe4083e36ee69748e";
+    private readonly apiKeyDefault = this.props.fromApiKey || "e38cc7822bd7476fe4083e36ee69748e";
     private readonly startpageDefault = parseFiniteInt(this.props.startpage, 1);
     private readonly totalPagesDefault = parseFiniteInt(this.props.totalPages, -1);
     state = {
         showTokenInstruction: false,
         showSessionInstruction: false,
-        libreUsername: this.props.user_libre || "",
-        librePassword: "",
-        libreApiKey: this.props.api_key_libre || default_key,
-        libreToken: this.props.token || "",
-        libreSecret: this.props.secret || default_secret,
-        libreSessionKey: this.props.sk || "",
-        api_key: this.apiKeyDefault,
+        toUsername: this.props.user_libre || "",
+        toApiKey: this.props.toApiKey || default_key,
+        toToken: this.props.token || "",
+        toSecret: this.props.secret || default_secret,
+        toSessionKey: this.props.sk || "",
+        fromApiKey: this.apiKeyDefault,
         api_method: apiMethodDefault,
-        userLastFm: this.props.user_last || "",
+        fromUser: this.props.user_last || "",
         scrobbles: [],
         startpage: this.startpageDefault,
         totalPages: this.totalPagesDefault,
@@ -76,6 +81,8 @@ export class App extends React.PureComponent<Props, State> {
         errorMessage: null,
         xhr: null,
         showJson: false,
+        exportFrom: "Last.fm",
+        importTo: "Libre.fm",
     };
 
     fetchUrl(url: string, cb: (p: number, res: any, err: any) => any, timeout: number = -1) {
@@ -158,12 +165,8 @@ export class App extends React.PureComponent<Props, State> {
                 ifr.className = "output-librefm-scrobble";
                 const frameName = `${page}-${i + 1}`;
                 ifr.name = frameName;
-                const {form, submit} = createScrobbleForm(frameName,
-                    this.state.libreApiKey,
-                    this.state.libreSessionKey,
-                    this.state.libreSecret,
-                    bucket);
-                form.style.width = `100%`;
+                const {form, submit} = createScrobbleForm(frameName, this.state.importTo, this.state.toApiKey, this.state.toSessionKey, this.state.toSecret, bucket);
+                form.className = "form-scrobble-libre";
                 submit.className = "btn-scrobble-libre";
                 holder.appendChild(ifr);
                 holder.appendChild(form);
@@ -184,7 +187,7 @@ export class App extends React.PureComponent<Props, State> {
     }
 
     startExportJsonPage(startpage: number, pushToLibre: boolean) {
-        const url = createUrl(this.state.api_method, this.state.userLastFm, this.state.api_key, startpage, this.state.resultsPerPageLastFm);
+        const url = createUrl(this.state.api_method, this.state.fromUser, this.state.fromApiKey, startpage, this.state.resultsPerPageLastFm);
         const currentRequest = this.state.xhr;
         if (currentRequest) currentRequest.abort();
         this.setState({
@@ -230,27 +233,30 @@ export class App extends React.PureComponent<Props, State> {
     render() {
         return <div id="app-root">
             <section>
-                <h2>Last.fm parameters</h2>
+                <h2>{this.state.exportFrom} parameters</h2>
                 <div className="api-parameters">
                     <ApiParameter
-                        currentValue={this.state.userLastFm}
+                        currentValue={this.state.fromUser}
                         defaultValue={this.props.user_last || ""}
                         title="Username"
                         htmlFor="username-lastfm"
                         onChange={e => {
-                            this.setState({userLastFm: e.target.value});
+                            this.setState({fromUser: e.target.value});
                         }}>
-                        <a className={`${this.state.userLastFm ? "visible" : "hidden"} btn-side api-parameter-cell xsmall`}
-                           href={`https://www.last.fm/user/${this.state.userLastFm}`}>Profile</a></ApiParameter>
+                        <BtnSideUserProfileUrl
+                            username={this.state.fromUser}
+                            scrobbler={this.state.exportFrom}/>
+                    </ApiParameter>
                     <ApiParameter
-                        currentValue={this.state.api_key}
-                        defaultValue={this.props.api_key || ""}
+                        currentValue={this.state.fromApiKey}
+                        defaultValue={this.props.fromApiKey || ""}
                         title="API key"
                         htmlFor="api-key-lastfm"
                         onChange={e => {
-                            this.setState({api_key: e.target.value});
+                            this.setState({fromApiKey: e.target.value});
                         }}>
-                        <a className="btn-side api-parameter-cell xsmall" href="https://www.last.fm/api/account/create">Request
+                        <a className="btn-side api-parameter-cell xsmall"
+                           href={apiAuthEndpointFor(this.state.exportFrom) + "account/create"}>Request
                             API key</a>
                     </ApiParameter>
                     <ApiParameter
@@ -291,49 +297,53 @@ export class App extends React.PureComponent<Props, State> {
                         })}/>
                 </div>
                 <div className={
-                    `all-set ${(this.state.userLastFm &&
-                        this.state.api_key) ? `visible` : `hidden`}`}>✓ All Last.fm settings set
+                    `all-set ${(this.state.fromUser &&
+                        this.state.fromApiKey) ? `visible` : `hidden`}`}>✓ All {this.state.exportFrom} parameters set
                 </div>
             </section>
 
 
-            <section>
-                <h2>Libre.fm settings</h2>
+            <SubtitledSection title={`${this.state.importTo} parameters`}
+                              id="librefm-settings">
+                <div className="xsmall subtitle">You need create an access token and start a session to allow this
+                    website to add scrobbled tracks to your account
+                </div>
                 <div className="api-parameters">
                     <ApiParameter
                         htmlFor="api-key-libre"
                         title="API key"
-                        defaultValue={this.props.api_key_libre || default_key}
-                        currentValue={this.state.libreApiKey}
+                        defaultValue={this.props.toApiKey || default_key}
+                        currentValue={this.state.toApiKey}
                         onChange={(e => {
-                            const libreApiKey = e.target.value;
-                            this.setState({libreApiKey});
+                            const toApiKey = e.target.value;
+                            this.setState({toApiKey});
                         })}/>
 
                     <ApiParameter
                         htmlFor="api-secret-libre"
                         title="Secret"
                         defaultValue={this.props.secret || default_secret}
-                        currentValue={this.state.libreSecret}
+                        currentValue={this.state.toSecret}
                         onChange={(e => {
-                            this.setState({libreSecret: e.target.value});
+                            this.setState({toSecret: e.target.value});
                         })}/>
                     <ApiParameter
                         htmlFor="api-token-libre"
                         title="Token"
                         defaultValue={this.props.token}
-                        currentValue={this.state.libreToken}
+                        currentValue={this.state.toToken}
                         onChange={(e => {
-                            this.setState({libreToken: e.target.value});
+                            this.setState({toToken: e.target.value});
                         })}>
-                        <form action={libre2_0} className="api-parameter-cell" target="myFrame" method="post">
+                        <form action={apiEndpointFor(this.state.importTo)} className="api-parameter-cell"
+                              target="myFrame" method="post">
                             <input type="hidden" name="method" value="auth.getToken"/>
-                            <input type="hidden" name="api_key" value={this.state.libreApiKey}/>
+                            <input type="hidden" name="api_key" value={this.state.toApiKey}/>
                             <input type="hidden" name="format" value="json"/>
                             <input type="hidden" name="api_sig" value={constructSignatureForParams([
-                                ["api_key", this.state.libreApiKey],
+                                ["fromApiKey", this.state.toApiKey],
                                 ["method", "auth.getToken"]
-                            ], this.state.libreSecret)}/>
+                            ], this.state.toSecret)}/>
                             <input value="Create token"
                                    className="btn-side btn-create-token"
                                    type="submit"
@@ -344,7 +354,18 @@ export class App extends React.PureComponent<Props, State> {
                                    }}/>
                         </form>
                     </ApiParameter>
-
+                    <div className="api-parameter">
+                        <form action={apiAuthEndpointFor(this.state.importTo) + "auth/"}
+                              className={`${this.state.toToken ? "visible" : "hidden"}`}
+                              target="_blank"
+                              method="post">
+                            <input type="hidden" name="api_key" value={this.state.toApiKey}/>
+                            <input type="hidden" name="token" value={this.state.toToken}/>
+                            <input value="Authorize this token to change your account"
+                                   className="btn-authorize-token btn-big"
+                                   type="submit"/>
+                        </form>
+                    </div>
                     <div className="api-parameter">
                         <span
                             className={`instruction ${this.state.showTokenInstruction ? "visible" : "hidden"}`}>Copy the token into the above field. So if the response is <code>{"{"}"token": "xyz"}</code>, copy <em>xyz</em> without the quotes.</span>
@@ -353,52 +374,41 @@ export class App extends React.PureComponent<Props, State> {
                         <iframe name="myFrame" id="myFrame"
                                 className={`frame-output api-parameter-cell ${this.state.showTokenInstruction ? "visible" : "hidden"}`}/>
                     </div>
-                    <div className="api-parameter">
-                        <form action={libreApi + "auth/"}
-                              className={`${this.state.libreToken ? "visible" : "hidden"}`}
-                              target="_blank"
-                              method="post">
-                            <input type="hidden" name="api_key" value={this.state.libreApiKey}/>
-                            <input type="hidden" name="token" value={this.state.libreToken}/>
-                            <input value="Authorize this token to change your account"
-                                   className="btn-authorize-token btn-big"
-                                   type="submit"/>
-                        </form>
-                    </div>
                     <h3>Session</h3>
                     <ApiParameter
                         htmlFor="api-username-libre"
                         title="Username"
                         defaultValue={this.props.user_libre || ""}
-                        currentValue={this.state.libreUsername}
+                        currentValue={this.state.toUsername}
                         onChange={(e => {
-                            const libreUsername = e.target.value;
-                            this.setState({libreUsername});
+                            const toUsername = e.target.value;
+                            this.setState({toUsername});
                         })}>
-                        <a className={`${this.state.libreUsername ? "visible" : "hidden"} api-parameter-cell xsmall btn-side`}
-                           href={`https://libre.fm/user/${this.state.libreUsername}`}>Profile</a>
+                        <BtnSideUserProfileUrl
+                            username={this.state.toUsername}
+                            scrobbler={this.state.importTo}/>
                     </ApiParameter>
                     <ApiParameter
                         htmlFor="api-sk-libre"
                         title="Session key"
                         defaultValue={this.props.sk || ""}
-                        currentValue={this.state.libreSessionKey}
+                        currentValue={this.state.toSessionKey}
                         onChange={(e => {
-                            this.setState({libreSessionKey: e.target.value});
+                            this.setState({toSessionKey: e.target.value});
                         })}>
-                        <form action={libre2_0}
-                              className={`api-parameter-cell ${this.state.libreToken ? "visible" : "hidden"}`}
+                        <form action={apiEndpointFor(this.state.importTo)}
+                              className={`api-parameter-cell ${this.state.toToken ? "visible" : "hidden"}`}
                               target="get-session-output"
                               method="post">
                             <input type="hidden" name="method" value="auth.getSession"/>
-                            <input type="hidden" name="api_key" value={this.state.libreApiKey}/>
-                            <input type="hidden" name="token" value={this.state.libreToken}/>
+                            <input type="hidden" name="api_key" value={this.state.toApiKey}/>
+                            <input type="hidden" name="token" value={this.state.toToken}/>
                             <input type="hidden" name="format" value="json"/>
                             <input type="hidden" name="api_sig" value={constructSignatureForParams([
-                                ["api_key", this.state.libreApiKey],
+                                ["api_key", this.state.toApiKey],
                                 ["method", "auth.getSession"],
-                                ["token", this.state.libreToken],
-                            ], this.state.libreSecret)}/>
+                                ["token", this.state.toToken],
+                            ], this.state.toSecret)}/>
                             <input value="Create session key"
                                    className="btn-create-session btn-side"
                                    type="submit"
@@ -415,25 +425,27 @@ export class App extends React.PureComponent<Props, State> {
                                 className={`frame-output ${this.state.showSessionInstruction ? "visible" : "hidden"}`}/>
                     </ApiParameter>
                     <div className={
-                        `all-set ${(this.state.libreApiKey &&
-                            this.state.libreUsername &&
-                            this.state.libreSecret &&
-                            this.state.libreSessionKey) ? `visible` : `hidden`}`}>✓ All Libre.fm settings set
+                        `all-set ${(this.state.toApiKey &&
+                            this.state.toUsername &&
+                            this.state.toSecret &&
+                            this.state.toSessionKey) ? `visible` : `hidden`}`}>✓ All {this.state.importTo} parameters
+                        set
                     </div>
                 </div>
-            </section>
+            </SubtitledSection>
             <StatusLine {...this.state} scrobbleNum={this.state.scrobbles.length}/>
 
-            <section id="url-state" className={""}>
-                <h2>Save URL to continue in the future</h2>
+            <SubtitledSection id="url-state" title="URL with current state">
+                <div className="xsmall subtitle">You can save this URL to to continue with in the future with the same
+                    parameters
+                </div>
                 <StateUrl {...this.state}/>
-            </section>
+            </SubtitledSection>
 
-            <section id="synchronize-scrobbles" className={"subtitled"}>
-                <h2>Synchronize Last.fm scrobbles to Libre.fm</h2>
+            <SubtitledSection id="synchronize-scrobbles"
+                              title={`Synchronize ${this.state.exportFrom} scrobbles to ${this.state.importTo}`}>
                 <div className="xsmall subtitle"><p>Scroll down the status windows to see if the scrobbles were
-                    succesful. Look
-                    for something like: <code>"@attr":{"{"}"accepted":"x","ignored":"y"}}}</code></p>
+                    succesful. Look for something like: <code>"@attr":{"{"}"accepted":"x","ignored":"y"}}}</code></p>
                     <p>You do not need to worry about tracks being scrobbled more than once. Duplicates are ignored
                         automatically.</p></div>
                 <div className="api-parameters">
@@ -441,7 +453,7 @@ export class App extends React.PureComponent<Props, State> {
                         classNameWhenSet=""
                         currentValue={this.state.startpage}
                         defaultValue={this.startpageDefault.toString()}
-                        title="Start on Last.fm 'Recently Listened' page"
+                        title={`Start on ${this.state.exportFrom} 'Recently Listened' page`}
                         htmlFor="api-startpage-lastfm"
                         onChange={(e => {
                             const parseInt1 = parseInt(e.target.value);
@@ -461,26 +473,18 @@ export class App extends React.PureComponent<Props, State> {
                         })}/>
                 </div>
                 <button onClick={() => {
-                    const {
-                        userLastFm,
-                        api_key,
-                        libreApiKey,
-                        libreUsername,
-                        libreSecret,
-                        libreSessionKey
-                    } = this.state;
-                    if (!userLastFm) {
-                        alert("Fill in Last.fm usernames first");
+                    const {fromUser, fromApiKey, toApiKey, toUsername, toSecret, toSessionKey} = this.state;
+                    if (!fromUser) {
+                        alert(`Fill in ${this.state.exportFrom} usernames first`);
                     }
-                    else if (api_key && libreApiKey && libreUsername && libreSecret && libreSessionKey) {
+                    else if (fromApiKey && toApiKey && toUsername && toSecret && toSessionKey) {
                         this.startExportJson(true);
                     } else {
                         alert("Fill in usernames / API keys / session keys first");
                     }
-                    // // const session = createSessionUrlLastFm(this.state.api_key, this.state.libreToken, );
-                    // // alert(connectApplicationLastFm(this.state.api_key) + "\n\n" + session);
-                }}>Synchronize Last.fm scrobbles to Libre.fm
-                </button>
+                    // // const session = createSessionUrlLastFm(this.state.fromApiKey, this.state.toToken, );
+                    // // alert(connectApplicationLastFm(this.state.fromApiKey) + "\n\n" + session);
+                }}>Synchronize {this.state.exportFrom} scrobbles to {this.state.importTo}</button>
                 <button onClick={() => {
                     const currentRequest = this.state.xhr;
                     if (currentRequest) currentRequest.abort();
@@ -488,27 +492,18 @@ export class App extends React.PureComponent<Props, State> {
                 }}>Stop
                 </button>
                 <div id="synchronize-scrobbles-output"/>
-            </section>
+            </SubtitledSection>
 
             <section>
-                <h2>Last.fm export only</h2>
-                <button className="btn-export btn-big" onClick={() => this.startExportJson(false)}>Export Last.fm
-                    scrobbles
+                <h2>{this.state.exportFrom} export only</h2>
+                <button className="btn-export btn-big"
+                        onClick={() => this.startExportJson(false)}>Export {this.state.exportFrom} scrobbles
                 </button>
-                <div>
-                    <input type="checkbox" id="show-output" name="show-output" defaultChecked={this.state.showJson}
-                           onChange={(e) => {
-                               this.setState({
-                                   showJson: e.target.checked
-                               });
-                           }}/><label htmlFor="show-output">Show output</label>
-                    {
-                        this.state.showJson
-                            ?
-                            <textarea className="output-json output-tall" value={JSON.stringify(this.state.scrobbles)}/>
-                            : ""
-                    }
-                </div>
+                <ShowOutput scrobbles={this.state.scrobbles} showJson={this.state.showJson} onChange={(e) => {
+                    this.setState({
+                        showJson: e.target.checked
+                    });
+                }}/>
             </section>
         </div>;
     }
@@ -522,41 +517,3 @@ export class App extends React.PureComponent<Props, State> {
         });
     }
 }
-
-/*onClick={() => {
-                                const urlToken = urlGetToken(libre2_0, this.state.libreApiKey, this.state.libreSecret);
-                                const input = document.getElementById("api-token-libre");
-                                if (!!input) {
-                                    // const iFrame = document.createElement("iframe");
-                                    // iFrame.src = urlToken;
-                                    // iFrame.onload = function () {
-                                    //     const myDoc = iFrame.contentDocument? iFrame.contentDocument: iFrame.contentWindow.document;
-                                    //     alert((myDoc as any).innerHTML);
-                                    // };
-                                    // input.parentElement.appendChild(iFrame);
-                                }
-                                // // const sec = this.state.libreSecret;
-                                // // const api_key = this.state.api_key;
-                                // const component = this;
-                                // makeGetRequest(urlToken, function () {
-                                //     const res = JSON.parse(this.responseText);
-                                //     if (res.hasOwnProperty("token")) {
-                                //         // const url = createSessionUrl(libre2_0, api_key, res.token, sec);
-                                //         // window.open(url, "_self");
-                                //         // component.setState({
-                                //         //     libreToken: res.token
-                                //         // });
-                                //
-                                //         const input = document.getElementById("api-token-libre");
-                                //         if (!!input) {
-                                //             (input as HTMLInputElement).value = res.token;
-                                //         }
-                                //     } else {
-                                //         // todo more friendly error message
-                                //         alert(`Could not get token: ${res.error} - leave a bug report.`);
-                                //     }
-                                // }, function () {
-                                //     alert("Could not get token - leave a bug report.");
-                                // });
-                            }
-                            }*/

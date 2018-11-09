@@ -1,17 +1,17 @@
 import {connectApplication, createSessionUrl} from "./scrobbler/scrobbler_api";
+import {last2_0} from "./scrobbler/lastConstants";
 
-const baseUrl = "https://ws.audioscrobbler.com/2.0/";
 const lastFmBase = "https://www.last.fm/api/";
-const baseurl = baseUrl + "?";
+const baseurl = last2_0 + "?";
 
 export const apiMethodDefault = "user.getrecenttracks";
 
 export const createUrl = (api_method: string,
-                          userLastFm: string,
+                          fromUser: string,
                           api_key: string,
                           startpage: number,
                           limit: number = 2) =>
-    `${baseurl}method=${api_method}&user=${userLastFm}&api_key=${api_key}&limit=${limit}&page=${startpage}&format=json`;
+    `${baseurl}method=${api_method}&user=${fromUser}&api_key=${api_key}&limit=${limit}&page=${startpage}&format=json`;
 
-export const createSessionUrlLastFm = (apiKey: string, token: string, secret: string) => createSessionUrl(baseUrl, apiKey, token, secret);
+export const createSessionUrlLastFm = (apiKey: string, token: string, secret: string) => createSessionUrl(last2_0, apiKey, token, secret);
 export const connectApplicationLastFm = (apiKey: string) => connectApplication(lastFmBase, apiKey);

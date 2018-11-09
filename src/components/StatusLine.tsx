@@ -26,5 +26,5 @@ export const StatusLine: React.StatelessComponent<{
         : errorMessage ? <ErrorMessage key="retrying" errorMessage={errorMessage}/>
             : url ? <div key="retrying" className="status-line">Fetching ...</div>
                 : <div key="retrying" className="status-line"/>);
-    return <div className="status">{children}</div>;
+    return <pre className="status">{children}</pre>;
 };

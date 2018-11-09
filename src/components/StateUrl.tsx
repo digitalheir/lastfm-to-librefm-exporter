@@ -3,14 +3,14 @@ import {StatelessComponent} from "react";
 import {urlEncodeParams} from "../util/collections";
 
 interface StateState {
-    api_key: string;
+    fromApiKey: string;
     showJson: boolean;
-    userLastFm: string;
-    libreUsername: string;
-    libreToken: string;
-    libreApiKey: string;
-    libreSecret: string;
-    libreSessionKey: string;
+    fromUser: string;
+    toUsername: string;
+    toToken: string;
+    toApiKey: string;
+    toSecret: string;
+    toSessionKey: string;
     startpage: number;
     totalPages: number;
 }
@@ -21,13 +21,13 @@ function pushIfAvailable(v: string, params: string[][], k: string) {
 
 function createSaveUrl(s: StateState): string {
     const params: string[][] = [];
-    pushIfAvailable(s.api_key, params, "api_key");
-    pushIfAvailable(s.libreApiKey, params, "api_key_libre");
-    pushIfAvailable(s.libreToken, params, "token");
-    pushIfAvailable(s.libreSecret, params, "secret");
-    pushIfAvailable(s.libreSessionKey, params, "sk");
-    pushIfAvailable(s.libreUsername, params, "user_libre");
-    pushIfAvailable(s.userLastFm, params, "user_last");
+    pushIfAvailable(s.fromApiKey, params, "fromApiKey");
+    pushIfAvailable(s.toApiKey, params, "toApiKey");
+    pushIfAvailable(s.toToken, params, "token");
+    pushIfAvailable(s.toSecret, params, "secret");
+    pushIfAvailable(s.toSessionKey, params, "sk");
+    pushIfAvailable(s.toUsername, params, "user_libre");
+    pushIfAvailable(s.fromUser, params, "user_last");
     pushIfAvailable(s.startpage.toString(), params, "startpage");
     pushIfAvailable(s.totalPages.toString(), params, "totalPages");
     return `https://digitalheir.github.io/lastfm-to-librefm-exporter/?${urlEncodeParams(params, true)}`;

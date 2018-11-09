@@ -78,6 +78,12 @@
 
     .status {
         margin: 24px 0 12px 0;
+        background: #eee;
+        padding: 24px 12px;
+        border: 3px double #333;
+        word-break: break-all;
+        line-break: normal;
+        white-space: normal;
     }
 
     .status-line-url {
@@ -195,7 +201,7 @@
     }
 
     .output-tall {
-        min-height: 144px;
+        min-height: 600px;
     }
 
     .output-librefm-scrobble {
@@ -213,6 +219,10 @@
         border: none;
         margin: 0;
         padding: 0;
+    }
+
+    .form-scrobble-libre {
+        width: 100%;
     }
 
     .btn-scrobble-libre {
@@ -248,6 +258,21 @@
 
     .scrobble-page-holder {
         position: relative;
+    }
+
+    label[for=show-output] {
+        font-size: 1.4em;;
+        padding-left: 1em;
+    }
+
+    .show-output-wrapper{
+        margin-top: 1em;
+        margin-bottom: 1em;
+    }
+
+    #show-output {
+        min-width: 1em;
+        min-height: 1em;
     }
 
     .label-input-empty::before, .label-input-set::before {
@@ -289,18 +314,22 @@
             margin: 0 24px;
         }
     }
+
     @media only screen and (max-width: 768px) {
         #app-root {
             margin: 0 24px;
         }
+
         #introduction {
             margin: 0 24px;
         }
     }
+
     @media only screen and (max-width: 480px) {
         #app-root {
             margin: 0 8px;
         }
+
         #introduction {
             margin: 0 8px;
         }
@@ -334,7 +363,7 @@
                     disabled
                     class="mdc-text-field api-parameter-cell api-parameter-input" id="dummy-username-lastfm" type="text"
                     name="dummy-username-lastfm" value=""><a class="hidden api-parameter-cell xsmall"
-                                                             href="https://www.last.fm/user/">Profile</a></div>
+                                                             href="">Profile</a></div>
             <div class="api-parameter"><label class="api-parameter-cell api-parameter-label label-input-set"
                                               for="dummy-api-key-lastfm">API key</label><input
                     class="mdc-text-field api-parameter-cell api-parameter-input" id="dummy-api-key-lastfm" type="text"
@@ -405,7 +434,7 @@
                     class="mdc-text-field api-parameter-cell api-parameter-input" id="dummy-api-username-libre"
                     type="text"
                     name="dummy-api-username-libre" disabled value=""><a class="visible api-parameter-cell xsmall"
-                                                                         href="https://libre.fm/user/dfgdsfggfd">Profile</a>
+                                                                         href="">Profile</a>
             </div>
             <div class="api-parameter"><label class="api-parameter-cell api-parameter-label label-input-set"
                                               for="dummy-api-sk-libre">Session key</label><input
