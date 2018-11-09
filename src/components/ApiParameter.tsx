@@ -1,5 +1,5 @@
 import * as React from "react";
-import {PureComponent, createRef} from "react";
+import {PureComponent} from "react";
 
 function classNameInput(value: any, preferred?: string) {
     return value ? preferred ? preferred : "label-input-set" : "label-input-empty";
