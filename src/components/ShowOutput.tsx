@@ -10,5 +10,7 @@ export const ShowOutput: StatelessComponent<{ showJson: boolean, onChange: Chang
                    defaultChecked={showJson}
                    onChange={onChange}/><label htmlFor="show-output">Show output</label></div>
         <textarea className={`output-json output-tall ${showJson ? "visible" : "hidden"}`}
-                  value={showJson ? JSON.stringify(scrobbles) : ""}/>
+                  value={showJson ? JSON.stringify(scrobbles) : ""}
+                  readOnly={true}
+        />
     </div>;

@@ -4,7 +4,8 @@ import {makePostRequest} from "../fetch-url";
 import {urlEncodeParams} from "../util/collections";
 import {last2_0, lastApi} from "./lastConstants";
 import {libre2_0, libreApi} from "./libreConstants";
-import {Scrobble} from "../parse_track";
+import {Scrobble} from "./parse_track";
+import {scrobble2_0, scrobbleApi, scrobbleFmRoot} from "./scrobbleConstants";
 
 export const urlGetToken = (base_url: string, api_key: string, secret: string) => {
     const params = [
@@ -103,8 +104,8 @@ const constructSignature = (apiKey: string, method: string, token: string, secre
 
 const sortByKey = (data: string[][]) => data.sort((a, b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0);
 
-export const constructSignatureForParams = (data: string[][], secret: string): string => md5hash(
-    `${sortByKey(data).map(pair => pair[0] + pair[1])}${secret}`);
+export const constructSignatureForParams = (data: string[][], secret: string): string =>
+    md5hash(`${sortByKey(data).map(pair => pair[0] + pair[1]).join("")}${secret}`);
 
 export const getUserProfileUrl = (scrobbler: string, username: string): string => {
     switch (scrobbler) {
@@ -112,6 +113,8 @@ export const getUserProfileUrl = (scrobbler: string, username: string): string =
             return `https://libre.fm/user/${username}`;
         case "Last.fm":
             return `https://www.last.fm/user/${username}`;
+        case "Scrobble.fm":
+            return `${scrobbleFmRoot}user/${username}`;
         // fallback
         default:
             return `https://libre.fm/user/${username}`;
@@ -124,6 +127,8 @@ export const apiEndpointFor = (scrobbler: string): string => {
             return libre2_0;
         case "Last.fm":
             return last2_0;
+        case "Scrobble.fm":
+            return scrobble2_0;
         // fallback
         default:
             return last2_0;
@@ -136,6 +141,8 @@ export const apiAuthEndpointFor = (scrobbler: string): string => {
             return libreApi;
         case "Last.fm":
             return lastApi;
+        case "Scrobble.fm":
+            return scrobbleApi;
         // fallback
         default:
             return lastApi;

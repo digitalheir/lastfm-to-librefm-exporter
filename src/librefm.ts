@@ -1,4 +1,4 @@
-import {Scrobble} from "./parse_track";
+import {Scrobble} from "./scrobbler/parse_track";
 
 // export const connectApplicationLibreFm = (apiKey: string) => connectApplication(libreApi, apiKey);
 

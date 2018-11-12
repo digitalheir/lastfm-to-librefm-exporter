@@ -1,7 +1,7 @@
 import * as React from "react";
 import {ApiParameter} from "./ApiParameter";
 import {StatusLine} from "./StatusLine";
-import {parseRawScrobble, Scrobble} from "../parse_track";
+import {parseRawScrobble, Scrobble} from "../scrobbler/parse_track";
 import {apiMethodDefault} from "../lastfm";
 import {makeGetRequest} from "../fetch-url";
 import {
@@ -66,7 +66,7 @@ export class App extends React.PureComponent<Props, State> {
     private readonly startpageDefault = parseFiniteInt(this.props.startpage, 1);
     private readonly totalPagesDefault = parseFiniteInt(this.props.totalPages, -1);
     private readonly exportFromDefault = this.props.exportFrom || "Last.fm";
-    private readonly importToDefault = this.props.importTo || "Libre.fm";
+    private readonly importToDefault = this.props.importTo || "Scrobble.fm";
     state = {
         showTokenInstruction: false,
         showSessionInstruction: false,
@@ -368,11 +368,16 @@ export class App extends React.PureComponent<Props, State> {
                         </form>
                     </ApiParameter>
                     <div className="api-parameter">
-                        <form action={apiAuthEndpointFor(this.state.importTo) + "auth/"}
-                              className={`${this.state.toToken ? "visible" : "hidden"}`}
-                              target="_blank"
-                              method="post">
+                        <form
+                            action={`${apiAuthEndpointFor(this.state.importTo)}auth${this.state.importTo === "Last.fm" ? "" : "/"}`}
+                            className={`${this.state.toToken ? "visible" : "hidden"}`}
+                            target="_blank"
+                            method={this.state.importTo === "Scrobble.fm" /*||this.state.importTo === "Last.fm"*/ ? "get" : "post"}>
                             <input type="hidden" name="api_key" value={this.state.toApiKey}/>
+                            <input type="hidden" name="token" value={this.state.toToken}/>
+                            <input type="hidden"
+                                   name="api_sig"
+                                   value={constructSignatureForParams([["api_key", this.state.toApiKey], ["token", this.state.toToken],], this.state.toSecret)}/>
                             <input type="hidden" name="token" value={this.state.toToken}/>
                             <input value="Authorize this token to change your account"
                                    className="btn-authorize-token btn-big"
